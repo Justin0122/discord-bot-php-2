@@ -49,17 +49,16 @@ class Pagination
         $optionRepository = $interaction->data->options;
         $value = $optionRepository['field']->value;
         $amount = $optionRepository['fields']->value;
-        $fields = [];
 
         for ($i = 0; $i < $amount; $i++) {
-            $fields[] = [
+            $embedFields[] = [
                 'name' => 'test',
                 'value' => $value,
-                'inline' => false
+                'inline' => true
             ];
         }
 
-        $slashIndex = new SlashIndex($fields);
+        $slashIndex = new SlashIndex($embedFields);
 
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Pong!');
@@ -69,10 +68,7 @@ class Pagination
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
 
-        $slashIndex->handlePagination($amount, $messageBuilder, $discord, $interaction);
-
-
-        $interaction->respondWithMessage($messageBuilder);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
     }
 
 }

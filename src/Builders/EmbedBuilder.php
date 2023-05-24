@@ -108,7 +108,4 @@ class EmbedBuilder extends MessageBuilder
     {
         return $this->embed;
     }
-
-
-
 }

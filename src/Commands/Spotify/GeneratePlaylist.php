@@ -8,28 +8,33 @@ use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\EmbedBuilder;
 use Bot\Models\Spotify;
-use Bot\Events\Error;
 
-class GetLatestSongs
+class GeneratePlaylist
 {
     public function getName(): string
     {
-        return 'getlatestsong';
+        return 'generateplaylist';
     }
 
     public function getDescription(): string
     {
-        return 'Get the latest song from your liked songs';
+        return 'Generate a playlist from within a time frame';
     }
 
     public function getOptions(): array
     {
         return [
             [
-                'name' => 'amount',
-                'description' => 'amount of songs',
-                'type' => 4,
-                'required' => false
+                'name' => 'startDate',
+                'description' => 'Start date',
+                'type' => 3,
+                'required' => true
+            ],
+            [
+                'name' => 'endDate',
+                'description' => 'End date',
+                'type' => 3,
+                'required' => true
             ]
         ];
     }
@@ -42,15 +47,11 @@ class GetLatestSongs
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;
-        $amount = $optionRepository['amount']->value ?? 24;
+        $startDate = $optionRepository['startDate']->value;
+        $endDate = $optionRepository['endDate']->value;
 
         $spotify = new Spotify();
-        $tracks = $spotify->getLatestSongs($user_id, $amount);
-
-        if ($tracks === null) {
-            Error::sendError($interaction, $discord, 'You have no liked songs');
-        }
-
+        $tracks = $spotify->generatePlaylist($user_id, $startDate, $endDate);
         $me = $spotify->getMe($user_id);
 
         $embedFields = [];
@@ -64,9 +65,9 @@ class GetLatestSongs
         }
 
         $builder = new EmbedBuilder($discord);
-        $builder->setTitle('The last ' . $amount . ' songs ' . $me->display_name . ' liked');
-        $builder->setDescription("Here are your latest songs");
-        $builder->setSuccess();
+        $builder->setTitle('Playlist generated');
+        $builder->setDescription('Playlist generated from ' . $startDate . ' to ' . $endDate);
+
 
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());

@@ -2,8 +2,6 @@
 
 namespace Bot;
 
-use AllowDynamicProperties;
-use Bot\Builders\EmbedBuilder;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
@@ -13,8 +11,8 @@ use Discord\Parts\Interactions\Interaction;
 
 class SlashIndex
 {
-    public int $offset = -12;
     public int $perPage = 12;
+    public int $offset = -12;
     public int $total = 0;
     public array $fields = [];
 
@@ -70,7 +68,6 @@ class SlashIndex
     public function getEmbed(Discord $discord): Embed
     {
         $embed = new Embed($discord);
-        $embed->setTitle('Button clicked');
         $embed->setColor('00ff00');
 
         $fields = array_slice($this->fields, $this->getOffset(), $this->perPage);
@@ -83,9 +80,9 @@ class SlashIndex
         return $embed;
     }
 
-    public function handlePagination(int $total, $builder, $discord, $interaction): void
+    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed): void
     {
-        if ($total > 12) {
+        if ($totalFields > 0) {
             $button1 = $this->paginationButton($discord, true);
             $button2 = $this->paginationButton($discord, false);
             if (($this->getOffset() + 1) === $this->getTotal()) {
@@ -96,26 +93,24 @@ class SlashIndex
                 $button2->setDisabled(true);
             }
 
+            $fields = array_slice($this->fields, $this->getOffset(), $this->perPage);
+            foreach ($fields as $field) {
+                $embed->addField($field['name'], $field['value'], $field['inline']);
+            }
+
             $row = ActionRow::new()
                 ->addComponent($button2)
                 ->addComponent($button1);
 
             $builder->addComponent($row);
+
+            $interaction->respondWithMessage($builder);
         }
         else{
-            $builder = new EmbedBuilder($discord);
-            $builder->setTitle('Pong!');
-            $builder->setDescription('Pong!');
-            $builder->setSuccess();
-
-            $messageBuilder = new MessageBuilder();
-            $messageBuilder->addEmbed($builder->build());
-
-
-            $interaction->respondWithMessage($messageBuilder);
+            $interaction->respondWithMessage($builder);
         }
 
-        $this->total = $total;
+        $this->total = $totalFields;
     }
 
     public function getOffset(): int

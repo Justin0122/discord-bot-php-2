@@ -2,7 +2,6 @@
 
 namespace Bot\Helpers;
 
-use Discord\Discord;
 use GuzzleHttp\Client;
 use SpotifyWebAPI\SpotifyWebAPI;
 
@@ -62,6 +61,9 @@ class TokenHandler
         $link = $this->apiUrl . '?discord_id=' . $discordId . '&secure_token=' . $this->secureToken . '&spotify_refresh_token=' . $refreshToken;
         $response = $this->client->request('GET', $link);
         $response = json_decode($response->getBody(), true);
+        if (!isset($response['data']['attributes']['spotify_access_token'])) {
+            return false;
+        }
         return $response['data']['attributes']['spotify_access_token'];
     }
 }

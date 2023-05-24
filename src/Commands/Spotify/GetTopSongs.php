@@ -10,16 +10,16 @@ use Bot\Builders\EmbedBuilder;
 use Bot\Models\Spotify;
 use Bot\Events\Error;
 
-class GetLatestSongs
+class GetTopSongs
 {
     public function getName(): string
     {
-        return 'getlatestsong';
+        return 'gettopsongs';
     }
 
     public function getDescription(): string
     {
-        return 'Get the latest song from your liked songs';
+        return 'Get the top songs from your liked songs';
     }
 
     public function getOptions(): array
@@ -27,7 +27,7 @@ class GetLatestSongs
         return [
             [
                 'name' => 'amount',
-                'description' => 'amount of songs',
+                'description' => 'amount of songs (max 24)',
                 'type' => 4,
                 'required' => false
             ]
@@ -45,17 +45,16 @@ class GetLatestSongs
         $amount = $optionRepository['amount']->value ?? 24;
 
         $spotify = new Spotify();
-        $tracks = $spotify->getLatestSongs($user_id, $amount);
+        $tracks = $spotify->getTopSongs($user_id, $amount);
+        $me = $spotify->getMe($user_id);
 
         if ($tracks === null) {
             Error::sendError($interaction, $discord, 'You have no liked songs');
         }
 
-        $me = $spotify->getMe($user_id);
-
         $embedFields = [];
         foreach ($tracks->items as $item) {
-            $track = $item->track;
+            $track = $item;
             $embedFields[] = [
                 'name' => $track->name,
                 'value' => '[Song link](' . $track->external_urls->spotify . ') ' . PHP_EOL . 'Artist: ' . $track->artists[0]->name,
@@ -65,7 +64,7 @@ class GetLatestSongs
 
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('The last ' . $amount . ' songs ' . $me->display_name . ' liked');
-        $builder->setDescription("Here are your latest songs");
+        $builder->setDescription("Here are your top songs");
         $builder->setSuccess();
 
         $messageBuilder = new MessageBuilder();

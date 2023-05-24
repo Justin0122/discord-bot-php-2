@@ -1,5 +1,8 @@
 <?php
+
+use Bot\Helpers\RemoveAllCommands;
 use Discord\Discord;
+use Discord\Parts\User\Activity;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
 use Discord\Parts\Interactions\Interaction;
@@ -26,11 +29,16 @@ try {
 
 $discord->on('ready', function (Discord $discord) {
     echo "Bot is ready!", PHP_EOL;
-    CommandRegistrar::register($discord);
+                $activity = new Activity($discord, [
+                'type' => Activity::TYPE_PLAYING,
+                'name' => 'PHP'
+            ]);
+            $discord->updatePresence($activity);
+
+    RemoveAllCommands::removeAllCommands($discord);
+//    CommandRegistrar::register($discord);
 
 });
-
-
 
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
     $command = CommandRegistrar::getCommandByName($interaction->data->name);
@@ -38,6 +46,5 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
         $command->handle($interaction, $discord, $interaction->member->user->id);
     }
 });
-
 
 $discord->run();
