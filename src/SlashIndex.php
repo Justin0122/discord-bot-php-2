@@ -2,6 +2,8 @@
 
 namespace Bot;
 
+use AllowDynamicProperties;
+use Bot\Builders\EmbedBuilder;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
@@ -11,13 +13,15 @@ use Discord\Parts\Interactions\Interaction;
 
 class SlashIndex
 {
-    public int $offset = 0;
-    public int $perPage = 5;
+    public int $offset = -12;
+    public int $perPage = 12;
     public int $total = 0;
+    public array $fields = [];
 
     public function __construct(array $fields)
     {
         $this->total = count($fields);
+        $this->fields = $fields;
     }
 
     public function paginationButton(Discord $discord, bool $isNextButton): Button
@@ -31,7 +35,7 @@ class SlashIndex
                     $embed = new Embed($discord);
                     $embed->setTitle('Error');
                     $embed->setDescription('You can\'t do that!');
-                    $embed->setColor('RED');
+                    $embed->setColor('ff0000');
                     $interaction->respondWithMessage(MessageBuilder::new()->addEmbed($embed), true);
                     return;
                 }
@@ -67,7 +71,7 @@ class SlashIndex
     {
         $embed = new Embed($discord);
         $embed->setTitle('Button clicked');
-        $embed->setColor('GREEN');
+        $embed->setColor('00ff00');
 
         $fields = [];
         foreach (range(1, $this->perPage) as $i) {
@@ -77,7 +81,7 @@ class SlashIndex
                 $fields[] = [
                     'name' => 'test',
                     'value' => 'test' . $this->getOffset() + $i,
-                    'inline' => false
+                    'inline' => true
                 ];
         }
         foreach ($fields as $field) {
@@ -89,8 +93,38 @@ class SlashIndex
         return $embed;
     }
 
-    public function setTotal(int $total): void
+    public function handlePagination(int $total, $builder, $discord, $interaction): void
     {
+        if ($total > 12) {
+            $button1 = $this->paginationButton($discord, true);
+            $button2 = $this->paginationButton($discord, false);
+            if (($this->getOffset() + 1) === $this->getTotal()) {
+                $button1->setDisabled(true);
+            }
+
+            if ($this->getOffset() === 0) {
+                $button2->setDisabled(true);
+            }
+
+            $row = ActionRow::new()
+                ->addComponent($button2)
+                ->addComponent($button1);
+
+            $builder->addComponent($row);
+        }
+        else{
+            $builder = new EmbedBuilder($discord);
+            $builder->setTitle('Pong!');
+            $builder->setDescription('Pong!');
+            $builder->setSuccess();
+
+            $messageBuilder = new MessageBuilder();
+            $messageBuilder->addEmbed($builder->build());
+
+
+            $interaction->respondWithMessage($messageBuilder);
+        }
+
         $this->total = $total;
     }
 
@@ -103,4 +137,5 @@ class SlashIndex
     {
         return $this->total;
     }
+
 }

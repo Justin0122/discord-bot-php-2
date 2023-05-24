@@ -4,7 +4,6 @@ namespace Bot\Commands;
 
 use Bot\SlashIndex;
 use Discord\Builders\Components\ActionRow;
-use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
@@ -35,7 +34,7 @@ class Pagination
                 'name' => 'fields',
                 'description' => 'amount of fields',
                 'type' => 4,
-                'required' => false
+                'required' => true
             ]
         ];
     }
@@ -50,7 +49,6 @@ class Pagination
         $optionRepository = $interaction->data->options;
         $value = $optionRepository['field']->value;
         $amount = $optionRepository['fields']->value;
-
         $fields = [];
 
         $slashIndex = new SlashIndex($fields);
@@ -60,25 +58,11 @@ class Pagination
         $builder->setDescription('Pong!');
         $builder->setSuccess();
 
-        $slashIndex->setTotal($amount);
-        $button1 = $slashIndex->paginationButton($discord, true);
-        $button2 = $slashIndex->paginationButton($discord, false);
-
-        if (($slashIndex->getOffset() + 1) === $slashIndex->getTotal()) {
-            $button1->setDisabled(true);
-        }
-
-        if ($slashIndex->getOffset() === 0) {
-            $button2->setDisabled(true);
-        }
-
-        $row = ActionRow::new()
-            ->addComponent($button2)
-            ->addComponent($button1);
-
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
-        $messageBuilder->addComponent($row);
+
+        $slashIndex->handlePagination($amount, $messageBuilder, $discord, $interaction);
+
 
         $interaction->respondWithMessage($messageBuilder);
     }

@@ -109,10 +109,6 @@ class EmbedBuilder extends MessageBuilder
         return $this->embed;
     }
 
-    public function send(): void
-    {
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($this->embed);
-    }
+
 
 }
