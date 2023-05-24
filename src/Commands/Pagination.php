@@ -51,6 +51,14 @@ class Pagination
         $amount = $optionRepository['fields']->value;
         $fields = [];
 
+        for ($i = 0; $i < $amount; $i++) {
+            $fields[] = [
+                'name' => 'test',
+                'value' => $value,
+                'inline' => false
+            ];
+        }
+
         $slashIndex = new SlashIndex($fields);
 
         $builder = new EmbedBuilder($discord);

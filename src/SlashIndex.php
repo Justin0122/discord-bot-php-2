@@ -73,17 +73,7 @@ class SlashIndex
         $embed->setTitle('Button clicked');
         $embed->setColor('00ff00');
 
-        $fields = [];
-        foreach (range(1, $this->perPage) as $i) {
-            if ($this->getOffset() + $i > $this->getTotal()) {
-                break;
-            }
-                $fields[] = [
-                    'name' => 'test',
-                    'value' => 'test' . $this->getOffset() + $i,
-                    'inline' => true
-                ];
-        }
+        $fields = array_slice($this->fields, $this->getOffset(), $this->perPage);
         foreach ($fields as $field) {
             $embed->addFieldValues($field['name'], $field['value'], $field['inline']);
         }
