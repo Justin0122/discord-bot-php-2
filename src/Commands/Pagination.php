@@ -25,17 +25,18 @@ class Pagination
     {
         return [
             [
-                'name' => 'field',
-                'description' => 'field content',
-                'type' => 3,
-                'required' => false
-            ],
-            [
                 'name' => 'fields',
                 'description' => 'amount of fields',
                 'type' => 4,
                 'required' => true
+            ],
+            [
+                'name' => 'field',
+                'description' => 'field content',
+                'type' => 3,
+                'required' => false
             ]
+
         ];
     }
 

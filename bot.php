@@ -35,8 +35,8 @@ $discord->on('ready', function (Discord $discord) {
             ]);
             $discord->updatePresence($activity);
 
-    RemoveAllCommands::removeAllCommands($discord);
-//    CommandRegistrar::register($discord);
+//    RemoveAllCommands::removeAllCommands($discord);
+    CommandRegistrar::register($discord);
 
 });
 

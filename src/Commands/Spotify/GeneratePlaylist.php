@@ -25,13 +25,13 @@ class GeneratePlaylist
     {
         return [
             [
-                'name' => 'startDate',
+                'name' => 'startdate',
                 'description' => 'Start date',
                 'type' => 3,
                 'required' => true
             ],
             [
-                'name' => 'endDate',
+                'name' => 'enddate',
                 'description' => 'End date',
                 'type' => 3,
                 'required' => true
@@ -47,8 +47,8 @@ class GeneratePlaylist
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;
-        $startDate = $optionRepository['startDate']->value;
-        $endDate = $optionRepository['endDate']->value;
+        $startDate = $optionRepository['startdate']->value;
+        $endDate = $optionRepository['enddate']->value;
 
         $spotify = new Spotify();
         $tracks = $spotify->generatePlaylist($user_id, $startDate, $endDate);
