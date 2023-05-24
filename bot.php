@@ -1,13 +1,9 @@
 <?php
 use Discord\Discord;
-use Discord\Parts\Interactions\Command\Command;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Helpers\CommandRegistrar;
-use Bot\Helpers\GetCommand;
-
-
 
 include __DIR__.'/vendor/autoload.php';
 
@@ -39,7 +35,7 @@ $discord->on('ready', function (Discord $discord) {
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
     $command = CommandRegistrar::getCommandByName($interaction->data->name);
     if ($command) {
-        $command->handle($interaction, $discord);
+        $command->handle($interaction, $discord, $interaction->member->user->id);
     }
 });
 

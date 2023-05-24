@@ -22,3 +22,7 @@ foreach (glob(__DIR__.'/src/Classes/*.php') as $filename) {
 foreach (glob(__DIR__.'/src/Components/*.php') as $filename) {
     include $filename;
 }
+
+foreach (glob(__DIR__.'/src/*.php') as $filename) {
+    include $filename;
+}
