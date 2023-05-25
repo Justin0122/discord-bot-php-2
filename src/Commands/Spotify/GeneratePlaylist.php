@@ -60,9 +60,18 @@ class GeneratePlaylist
             return;
         }
 
-        $startDate = $startDate ? new DateTime($startDate) : (new DateTime())->modify('-1 month');
+        if ($startDate && new DateTime($startDate) < new DateTime('2015-01-01')) {
+            Error::sendError($interaction, $discord, 'Start date cannot be before 2015');
+            return;
+        }
+
+        $startDate = $startDate ? new DateTime($startDate) : new DateTime();
+        $currentMonth = $startDate->format('m');
+        $currentYear = $startDate->format('Y');
+        $startDate->setDate($currentYear, $currentMonth, 1);
         $endDate = clone $startDate;
         $endDate->modify('+1 month');
+        $endDate->modify('-1 day');
 
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Generating playlist');
