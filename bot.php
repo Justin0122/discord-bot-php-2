@@ -1,6 +1,4 @@
 <?php
-
-use Bot\Helpers\RemoveAllCommands;
 use Discord\Discord;
 use Discord\Parts\User\Activity;
 use Discord\WebSockets\Event;
