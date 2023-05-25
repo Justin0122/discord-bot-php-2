@@ -70,7 +70,7 @@ class Spotify
         return $topTracks;
     }
 
-    public function generatePlaylist($user_id, $startDate, $endDate)
+    public function generatePlaylist($user_id, $startDate, $endDate, $public): void
     {
         $api = (new SessionHandler())->setSession($user_id);
         $me = $api->me();
@@ -91,15 +91,8 @@ class Spotify
                 'time_range' => 'short_term'
             ]);
 
-            //if the startdate is bigger than the last fetched track, break the loop
             $addedAt = new DateTime($tracks->items[0]->added_at);
-            if ($addedAt < $startDate) {
-                echo 'No more tracks can be added.' . PHP_EOL;
-                break;
-            }
-
-            // Check if there are no more tracks available
-            if (empty($tracks->items)) {
+            if ($addedAt < $startDate || (empty($tracks->items))) {
                 echo 'No more tracks can be added.' . PHP_EOL;
                 break;
             }
@@ -126,7 +119,7 @@ class Spotify
         $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
         $playlist = $api->createPlaylist([
             'name' => $playlistTitle,
-            'public' => $args['public'] ?? false,
+            'public' => (bool)$public,
             'description' =>
                 'This playlist was generated with your liked songs from ' .
                 $startDate->format('Y-m-d') . ' to ' . $endDate->format('Y-m-d') . '.'
@@ -139,6 +132,18 @@ class Spotify
             echo 'Added ' . count($trackUri) . ' tracks to ' . $playlistTitle . '.' . PHP_EOL;
         }
 
-        return $playlist;
+        echo 'Done!' . PHP_EOL;
+    }
+
+    public function getPlaylistIdByName($user_id, $playlistName)
+    {
+        $api = (new SessionHandler())->setSession($user_id);
+        $playlists = $api->getUserPlaylists($api->me()->id);
+        foreach ($playlists->items as $playlist) {
+            if ($playlist->name == $playlistName) {
+                return $playlist->id;
+            }
+        }
+        return null;
     }
 }

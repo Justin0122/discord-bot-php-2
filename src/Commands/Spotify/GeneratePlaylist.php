@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\Error;
 use DateTime;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
@@ -29,6 +30,12 @@ class GeneratePlaylist
                 'description' => 'Start date',
                 'type' => 3,
                 'required' => false
+            ],
+            [
+                'name' => 'public',
+                'description' => 'Make playlist public',
+                'type' => 5,
+                'required' => false
             ]
         ];
     }
@@ -38,17 +45,24 @@ class GeneratePlaylist
         return null;
     }
 
+    /**
+     * @throws \Exception
+     */
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;
         $startDate = $optionRepository['startdate']->value;
+        $public = $optionRepository['public']->value ?? false;
+
+        if ($startDate && new DateTime($startDate) > new DateTime()) {
+            Error::sendError($interaction, $discord, 'Start date cannot be in the future');
+            return;
+        }
 
         $startDate = $startDate ? new DateTime($startDate) : (new DateTime())->modify('-1 month');
         $endDate = clone $startDate;
         $endDate->modify('+1 month');
-
-        echo $startDate->format('Y-m-d') . PHP_EOL;
-        echo $endDate->format('Y-m-d') . PHP_EOL;
 
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Generating playlist');
@@ -58,9 +72,8 @@ class GeneratePlaylist
 
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
-        $interaction->respondWithMessage($messageBuilder, true);
+        $interaction->respondWithMessage($messageBuilder, false);
 
-        //run makePlaylist in the background as fork process
         $pid = pcntl_fork();
         if ($pid == -1) {
             die('could not fork');
@@ -69,7 +82,16 @@ class GeneratePlaylist
         } else {
             //child
             $spotify = new Spotify();
-            $spotify->generatePlaylist($user_id, $startDate, $endDate);
+            $spotify->generatePlaylist($user_id, $startDate, $endDate, $public);
+
+            $builder = new EmbedBuilder($discord);
+            $builder->setTitle($playlistTitle . ' generated');
+            $builder->setDescription('[Click here to open the playlist](https://open.spotify.com/playlist/' . $spotify->getPlaylistIdByName($user_id, $playlistTitle) . ')' );
+            $builder->setSuccess();
+
+            $messageBuilder = new MessageBuilder();
+            $messageBuilder->addEmbed($builder->build());
+            $interaction->updateOriginalResponse($messageBuilder);
         }
 
     }
