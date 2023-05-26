@@ -2,7 +2,6 @@
 
 namespace Bot\Builders;
 
-use Bot\Events\ButtonListener;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 

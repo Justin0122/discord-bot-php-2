@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\InitialEmbed;
 use Bot\Events\Error;
 use DateTime;
 use Discord\Discord;
@@ -71,14 +72,10 @@ class GeneratePlaylist
         $startDate = $dates['startDate'];
         $endDate = $dates['endDate'];
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Generating playlist');
         $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
-        $builder->setDescription('Generating playlist with title: ' . $playlistTitle);
-        $builder->setInfo();
 
-        $messageBuilder = MessageBuilder::buildMessage($builder);
-        $interaction->respondWithMessage($messageBuilder, false);
+
+        InitialEmbed::Send($interaction, $discord, 'Generating playlist with title: ' . $playlistTitle);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -108,13 +105,8 @@ class GeneratePlaylist
             $interaction->updateOriginalResponse($messageBuilder);
         }
         else{
-            $builder = new EmbedBuilder($discord);
-            $builder->setTitle('Error');
-            $builder->setDescription('An error occurred while generating the playlist');
-            $builder->setError();
 
-            $messageBuilder = MessageBuilder::buildMessage($builder);
-            $interaction->updateOriginalResponse($messageBuilder);
+            Error::sendError($interaction, $discord, 'Something went wrong while generating the playlist');
         }
     }
 

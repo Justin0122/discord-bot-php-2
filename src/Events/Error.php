@@ -10,7 +10,7 @@ use Discord\Parts\Interactions\Interaction;
 
 class Error
 {
-    public static function sendError(Interaction $interaction, Discord $discord, $message): void
+    public static function sendError(Interaction $interaction, Discord $discord, $message, $isEdit = false): void
     {
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Error');
@@ -20,6 +20,10 @@ class Error
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
 
-        $interaction->respondWithMessage($messageBuilder, true);
+        if ($isEdit) {
+            $interaction->updateOriginalResponse($messageBuilder);
+        }else{
+            $interaction->respondWithMessage($messageBuilder, true);
+        }
     }
 }

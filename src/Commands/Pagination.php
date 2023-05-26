@@ -48,12 +48,12 @@ class Pagination
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;
-        $value = $optionRepository['field']->value;
+        $value = $optionRepository['field']->value ?? 'test';
         $amount = $optionRepository['fields']->value;
 
-        for ($i = 0; $i < $amount; $i++) {
+        for ($i = 1; $i < $amount; $i++) {
             $embedFields[] = [
-                'name' => 'test',
+                'name' => 'Field ' . $i,
                 'value' => $value,
                 'inline' => true
             ];

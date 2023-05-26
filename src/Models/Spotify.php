@@ -2,12 +2,9 @@
 
 namespace Bot\Models;
 
-use Bot\Builders\EmbedBuilder;
-use Bot\Events\Error;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
 use DateTime;
-use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 
@@ -22,10 +19,9 @@ class Spotify
 
     public function checkLimit($amount)
     {
-        if ($amount > 24) {
-            $amount = 24;
-        }
-        else if (!$amount) {
+        if ($amount > 50) {
+            $amount = 50;
+        } else if (!$amount) {
             $amount = 24;
         }
         return $amount;
@@ -78,7 +74,7 @@ class Spotify
     /**
      * @throws \Exception
      */
-    public function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction): bool | array
+    public function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction): bool|array
     {
         $api = (new SessionHandler())->setSession($user_id);
         $me = $api->me();
@@ -118,7 +114,7 @@ class Spotify
         if (empty($trackUris)) {
             return false;
         }
-        $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
+        $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') . '.';
 
         $playlist = $api->createPlaylist([
             'name' => $playlistTitle,
@@ -137,17 +133,29 @@ class Spotify
             $api->addPlaylistTracks($playlist->id, $trackUri);
         }
 
-        return[$playlistUrl, $playlistId];
+        return [$playlistUrl, $playlistId];
     }
 
-    public function getPlaylistTracks($user_id, $playlist_id, $amount): object|array|null
+    public function getPlaylists($user_id, $amount): object|array|null
     {
+        echo 'getting playlists' . PHP_EOL;
         $amount = $this->checkLimit($amount);
         $api = (new SessionHandler())->setSession($user_id);
-        $playlistTracks = $api->getPlaylistTracks($playlist_id, [
-            'limit' => $amount,
-        ]);
-        return $playlistTracks;
+        $playlists = [];
+        $offset = 0;
+
+        //fetch the playlists in batches of 50 (the max)
+        while (count($playlists) < $amount) {
+            $fetchedPlaylists = $api->getUserPlaylists($user_id, [
+                'limit' => 50,
+                'offset' => $offset
+            ]);
+
+            $playlists = array_merge($playlists, $fetchedPlaylists);
+            $offset += 50;
+        }
+
+        return $playlists;
     }
 
 }

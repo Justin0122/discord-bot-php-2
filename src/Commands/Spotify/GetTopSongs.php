@@ -2,6 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\InitialEmbed;
+use Bot\Events\Success;
 use Bot\SlashIndex;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
@@ -41,6 +43,23 @@ class GetTopSongs
 
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
+        InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your top songs');
+
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            die('could not fork');
+        } else if ($pid) {
+            //parent
+        } else {
+            //child
+            $this->getTopSongs($user_id, $discord, $interaction);
+        }
+
+    }
+
+    private function getTopSongs($user_id, $discord, Interaction $interaction)
+    {
+
         $optionRepository = $interaction->data->options;
         $amount = $optionRepository['amount']->value ?? 24;
 
@@ -62,14 +81,12 @@ class GetTopSongs
             ];
         }
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('The last ' . $amount . ' songs ' . $me->display_name . ' liked');
-        $builder->setDescription("Here are your top songs");
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, 'Your top songs', 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount);
 
         $messageBuilder = \Bot\Builders\MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
+
     }
 
 

@@ -10,17 +10,17 @@ use Discord\Parts\Interactions\Interaction;
 
 class ButtonListener
 {
-    public static function listener(Discord $discord, $button, $title = null, $description = null)
+    public static function listener(Discord $discord, $button, $title = "No title set", $description = "No description set"): void
     {
-            $button->setListener(function (Interaction $interaction) use ($description, $title, $discord) {
-                $builder = new EmbedBuilder($discord);
-                $builder->setTitle($title);
-                $builder->setDescription($description);
-                $builder->setSuccess();
+        $button->setListener(function (Interaction $interaction) use ($description, $title, $discord) {
+            $builder = new EmbedBuilder($discord);
+            $builder->setTitle($title);
+            $builder->setDescription($description);
+            $builder->setSuccess();
 
-                $messageBuilder = MessageBuilder::buildMessage($builder);
+            $messageBuilder = MessageBuilder::buildMessage($builder);
 
-                $interaction->updateMessage($messageBuilder);
-            }, $discord);
+            $interaction->updateMessage($messageBuilder);
+        }, $discord);
     }
 }
