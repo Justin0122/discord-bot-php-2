@@ -2,8 +2,9 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\ButtonBuilder;
 use Bot\Builders\EmbedBuilder;
-use Discord\Builders\MessageBuilder;
+use Bot\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 use SpotifyWebAPI\Session;
@@ -52,11 +53,10 @@ class Spotify
 
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Spotify');
-        $builder->setDescription("Click [here]($url) to login to spotify");
         $builder->setSuccess();
+        $row = ButtonBuilder::addLinkButton('Login', $url);
 
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$row]);
 
         $interaction->respondWithMessage($messageBuilder, true);
     }

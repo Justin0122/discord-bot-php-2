@@ -67,9 +67,7 @@ class GetTopSongs
         $builder->setDescription("Here are your top songs");
         $builder->setSuccess();
 
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
-
+        $messageBuilder = \Bot\Builders\MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
     }

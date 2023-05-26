@@ -2,8 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\MessageBuilder;
 use Bot\SlashIndex;
-use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\EmbedBuilder;
@@ -45,8 +45,8 @@ class ShareCurrentsong
 
         $builder->setSuccess();
 
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
+        $messageBuilder = MessageBuilder::buildMessage($builder);
+
 
         $embedFields = [];
         $slashIndex = new SlashIndex($embedFields);

@@ -2,9 +2,6 @@
 
 namespace Bot\Builders;
 
-use Bot\SlashIndex;
-use Discord\Builders\Components\ActionRow;
-use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Embed\Embed;
@@ -12,7 +9,7 @@ use Discord\Parts\Embed\Embed;
 class EmbedBuilder extends MessageBuilder
 {
     public $embed;
-    private $discord;
+    private Discord $discord;
 
     public function __construct(Discord $discord)
     {
@@ -29,12 +26,6 @@ class EmbedBuilder extends MessageBuilder
     public function setDescription(string $description): self
     {
         $this->embed->description = $description;
-        return $this;
-    }
-
-    public function setColor(string $color): self
-    {
-        $this->embed->color = $color;
         return $this;
     }
 
@@ -103,6 +94,7 @@ class EmbedBuilder extends MessageBuilder
         $this->embed->setColor('0000ff');
         return $this;
     }
+
 
     public function build(): Embed
     {

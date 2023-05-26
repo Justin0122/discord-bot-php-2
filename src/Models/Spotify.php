@@ -2,9 +2,14 @@
 
 namespace Bot\Models;
 
+use Bot\Builders\EmbedBuilder;
+use Bot\Events\Error;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
 use DateTime;
+use Discord\Builders\MessageBuilder;
+use Discord\Discord;
+use Discord\Parts\Interactions\Interaction;
 
 class Spotify
 {
@@ -70,7 +75,10 @@ class Spotify
         return $topTracks;
     }
 
-    public function generatePlaylist($user_id, $startDate, $endDate, $public): void
+    /**
+     * @throws \Exception
+     */
+    public function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction): bool | array
     {
         $api = (new SessionHandler())->setSession($user_id);
         $me = $api->me();
@@ -78,13 +86,10 @@ class Spotify
         $limit = 50; // Number of tracks per request
         $offset = 0; // Initial offset
 
-
         $trackUris = []; // Array to store track URIs
-
 
         // Fetch tracks in batches until there are no more tracks available
         while (count($trackUris) < $totalTracks) {
-            echo 'Fetching tracks ' . ($offset + 1) . ' to ' . ($offset + $limit) . '...' . PHP_EOL;
             $tracks = $api->getMySavedTracks([
                 'limit' => $limit,
                 'offset' => $offset,
@@ -93,7 +98,7 @@ class Spotify
 
             $addedAt = new DateTime($tracks->items[0]->added_at);
             if ($addedAt < $startDate || (empty($tracks->items))) {
-                echo 'No more tracks can be added.' . PHP_EOL;
+                // We've gone past the start date or there are no more tracks, so stop fetching
                 break;
             }
 
@@ -111,12 +116,10 @@ class Spotify
         }
 
         if (empty($trackUris)) {
-            echo 'No tracks found.' . PHP_EOL;
-            exit(); // Terminate the child process
+            return false;
         }
-
-
         $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
+
         $playlist = $api->createPlaylist([
             'name' => $playlistTitle,
             'public' => (bool)$public,
@@ -125,25 +128,26 @@ class Spotify
                 $startDate->format('Y-m-d') . ' to ' . $endDate->format('Y-m-d') . '.'
         ]);
 
+        $playlistUrl = $playlist->external_urls->spotify;
+        $playlistId = $playlist->id;
+
         $trackUris = array_chunk($trackUris, 100);
 
         foreach ($trackUris as $trackUri) {
             $api->addPlaylistTracks($playlist->id, $trackUri);
-            echo 'Added ' . count($trackUri) . ' tracks to ' . $playlistTitle . '.' . PHP_EOL;
         }
 
-        echo 'Done!' . PHP_EOL;
+        return[$playlistUrl, $playlistId];
     }
 
-    public function getPlaylistIdByName($user_id, $playlistName)
+    public function getPlaylistTracks($user_id, $playlist_id, $amount): object|array|null
     {
+        $amount = $this->checkLimit($amount);
         $api = (new SessionHandler())->setSession($user_id);
-        $playlists = $api->getUserPlaylists($api->me()->id);
-        foreach ($playlists->items as $playlist) {
-            if ($playlist->name == $playlistName) {
-                return $playlist->id;
-            }
-        }
-        return null;
+        $playlistTracks = $api->getPlaylistTracks($playlist_id, [
+            'limit' => $amount,
+        ]);
+        return $playlistTracks;
     }
+
 }

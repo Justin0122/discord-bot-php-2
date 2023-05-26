@@ -2,3 +2,4 @@
 .idea
 vendor
 src/media
+src/Commands/Interact/*

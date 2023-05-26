@@ -2,8 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\MessageBuilder;
 use Bot\SlashIndex;
-use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\EmbedBuilder;
@@ -68,9 +68,7 @@ class GetLatestSongs
         $builder->setDescription("Here are your latest songs");
         $builder->setSuccess();
 
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
-
+        $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
     }
