@@ -7,7 +7,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use Discord\Discord;
-use Discord\Builders\CommandBuilder;
 
 class CommandRegistrar
 {

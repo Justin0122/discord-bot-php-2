@@ -2,12 +2,12 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\InitialEmbed;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\InitialEmbed;
+use Bot\Events\Success;
 use Bot\Models\Spotify;
 use Bot\Events\Error;
+use Discord\Discord;
 
 class ShareCurrentsong
 {
@@ -33,7 +33,6 @@ class ShareCurrentsong
 
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
-
         InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your current song');
 
         $pid = pcntl_fork();
@@ -45,8 +44,6 @@ class ShareCurrentsong
             //child
             $this->getCurrentSong($user_id, $discord, $interaction);
         }
-
-
     }
 
     private function getCurrentSong($user_id, $discord, Interaction $interaction)
@@ -60,10 +57,7 @@ class ShareCurrentsong
             return;
         }
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Sharing current song');
-        $builder->setDescription('Sharing the song you are currently listening to');
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:');
         $builder->addField('Song', $tracks->item->name, true);
 
 
@@ -71,7 +65,6 @@ class ShareCurrentsong
         $builder->addField('Artist', $tracks->item->artists[0]->name, true);
         $builder->addField('Album', $tracks->item->album->name, true);
         $builder->addField('Duration', gmdate("i:s", $tracks->item->duration_ms / 1000), true);
-        $builder->setSuccess();
 
         $builder->setThumbnail($tracks->item->album->images[0]->url);
 

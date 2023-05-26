@@ -2,12 +2,12 @@
 
 namespace Bot;
 
+use Discord\Parts\Interactions\Interaction;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Embed\Embed;
-use Discord\Parts\Interactions\Interaction;
+use Discord\Discord;
 
 class SlashIndex
 {

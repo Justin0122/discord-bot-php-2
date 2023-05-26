@@ -2,14 +2,14 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\InitialEmbed;
-use Bot\Builders\MessageBuilder;
-use Bot\SlashIndex;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\MessageBuilder;
+use Bot\Builders\InitialEmbed;
+use Bot\Events\Success;
 use Bot\Models\Spotify;
 use Bot\Events\Error;
+use Discord\Discord;
+use Bot\SlashIndex;
 
 class GetPlaylists
 {
@@ -43,7 +43,7 @@ class GetPlaylists
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;
-        $amount = $optionRepository['amount']->value ?? 24;
+        $amount = $optionRepository['amount']->value ?? 6;
 
         InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your playlists');
 
@@ -62,19 +62,22 @@ class GetPlaylists
 
     private function getPlaylistsFromUser($user_id, $amount, $discord, $interaction): void
     {
-        echo "Fetching playlists...\n";
         $spotify = new Spotify();
         $playlists = $spotify->getPlaylists($user_id, $amount);
+        var_dump($playlists);
 
-        if ($playlists === null) {
-            Error::sendError($interaction, $discord, 'You have no playlists');
+        if (!$playlists) {
+            Error::sendError($interaction, $discord, 'Something went wrong', true);
+            return;
         }
 
 
         $me = $spotify->getMe($user_id);
+        echo $me->display_name . PHP_EOL;
 
         $embedFields = [];
         foreach ($playlists as $playlist) {
+            echo $playlist->name . PHP_EOL;
             $embedFields[] = [
                 'name' => $playlist->name,
                 'value' => 'Total tracks: ' . $playlist->tracks->total,
@@ -82,14 +85,11 @@ class GetPlaylists
             ];
         }
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Playlists of ' . $me->display_name);
-        $builder->setDescription("Here are your playlists");
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, 'Playlists of ' . $me->display_name, 'Total playlists: ' . count($playlists));
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
     }
 
 

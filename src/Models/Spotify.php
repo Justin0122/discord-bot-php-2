@@ -2,11 +2,11 @@
 
 namespace Bot\Models;
 
+use Discord\Parts\Interactions\Interaction;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
-use DateTime;
 use Discord\Discord;
-use Discord\Parts\Interactions\Interaction;
+use DateTime;
 
 class Spotify
 {
@@ -77,7 +77,6 @@ class Spotify
     public function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction): bool|array
     {
         $api = (new SessionHandler())->setSession($user_id);
-        $me = $api->me();
         $totalTracks = 250; // Total number of tracks to fetch
         $limit = 50; // Number of tracks per request
         $offset = 0; // Initial offset
@@ -126,6 +125,7 @@ class Spotify
 
         $playlistUrl = $playlist->external_urls->spotify;
         $playlistId = $playlist->id;
+        $playlistImage = $playlist->images[0]->url;
 
         $trackUris = array_chunk($trackUris, 100);
 
@@ -133,26 +133,32 @@ class Spotify
             $api->addPlaylistTracks($playlist->id, $trackUri);
         }
 
-        return [$playlistUrl, $playlistId];
+        return [$playlistUrl, $playlistId, $playlistImage];
     }
 
-    public function getPlaylists($user_id, $amount): object|array|null
+    public function getPlaylists($user_id, $amount): array | bool
     {
-        echo 'getting playlists' . PHP_EOL;
         $amount = $this->checkLimit($amount);
         $api = (new SessionHandler())->setSession($user_id);
         $playlists = [];
         $offset = 0;
+        $me = $api->me();
+
 
         //fetch the playlists in batches of 50 (the max)
         while (count($playlists) < $amount) {
-            $fetchedPlaylists = $api->getUserPlaylists($user_id, [
-                'limit' => 50,
+            $fetchedPlaylists = $api->getUserPlaylists($me->id, [
+                'limit' => 1,
                 'offset' => $offset
             ]);
 
-            $playlists = array_merge($playlists, $fetchedPlaylists);
-            $offset += 50;
+            $playlists = array_merge($playlists, $fetchedPlaylists->items);
+
+            $offset += 1;
+        }
+
+        if (empty($playlists)) {
+            return false;
         }
 
         return $playlists;

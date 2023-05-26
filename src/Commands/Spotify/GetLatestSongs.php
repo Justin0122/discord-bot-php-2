@@ -2,13 +2,13 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\MessageBuilder;
-use Bot\SlashIndex;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\MessageBuilder;
 use Bot\Models\Spotify;
+use Bot\Events\Success;
 use Bot\Events\Error;
+use Discord\Discord;
+use Bot\SlashIndex;
 
 class GetLatestSongs
 {
@@ -63,10 +63,7 @@ class GetLatestSongs
             ];
         }
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('The last ' . $amount . ' songs ' . $me->display_name . ' liked');
-        $builder->setDescription("Here are your latest songs");
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, 'Your latest songs', 'Your latest songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount);
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);

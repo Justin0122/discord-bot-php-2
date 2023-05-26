@@ -3,8 +3,8 @@
 namespace Bot\Builders;
 
 use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Embed\Embed;
+use Discord\Discord;
 
 class EmbedBuilder extends MessageBuilder
 {

@@ -7,11 +7,11 @@ use Discord\Discord;
 
 class Success
 {
-    public static function sendSuccess(Discord $discord, $title, $description): EmbedBuilder
+    public static function sendSuccess(Discord $discord, $title, $description = null): EmbedBuilder
     {
         $builder = new EmbedBuilder($discord);
         $builder->setTitle($title);
-        $builder->setDescription($description ?? 'Success');
+        $builder->setDescription($description ?? '');
         $builder->setSuccess();
 
         return $builder;

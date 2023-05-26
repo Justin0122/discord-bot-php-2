@@ -2,15 +2,13 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\InitialEmbed;
-use Bot\Events\Success;
-use Bot\SlashIndex;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
+use Bot\Events\Success;
 use Bot\Events\Error;
+use Discord\Discord;
+use Bot\SlashIndex;
 
 class GetTopSongs
 {

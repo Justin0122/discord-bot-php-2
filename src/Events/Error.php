@@ -2,11 +2,10 @@
 
 namespace Bot\Events;
 
-use Bot\Builders\EmbedBuilder;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-
+use Discord\Builders\MessageBuilder;
+use Bot\Builders\EmbedBuilder;
+use Discord\Discord;
 
 class Error
 {
@@ -21,9 +20,10 @@ class Error
         $messageBuilder->addEmbed($builder->build());
 
         if ($isEdit) {
-            $interaction->updateOriginalResponse($messageBuilder);
-        }else{
-            $interaction->respondWithMessage($messageBuilder, true);
+            $interaction->sendFollowUpMessage($messageBuilder, true);
+            $interaction->deleteOriginalResponse();
         }
+
+        $interaction->respondWithMessage($messageBuilder, true);
     }
 }

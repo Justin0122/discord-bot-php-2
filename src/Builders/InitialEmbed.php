@@ -2,8 +2,8 @@
 
 namespace Bot\Builders;
 
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
+use Discord\Discord;
 
 class InitialEmbed
 {
@@ -15,6 +15,6 @@ class InitialEmbed
         $builder->setInfo();
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
-        $interaction->respondWithMessage($messageBuilder, false);
+        $interaction->respondWithMessage($messageBuilder);
     }
 }

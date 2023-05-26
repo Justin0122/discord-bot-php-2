@@ -2,15 +2,15 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\InitialEmbed;
-use Bot\Events\Error;
-use DateTime;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
-use Bot\Models\Spotify;
-use Bot\Builders\ButtonBuilder;
 use Bot\Builders\MessageBuilder;
+use Bot\Builders\ButtonBuilder;
+use Bot\Builders\EmbedBuilder;
+use Bot\Builders\InitialEmbed;
+use Bot\Models\Spotify;
+use Bot\Events\Error;
+use Discord\Discord;
+use DateTime;
 
 class GeneratePlaylist
 {
@@ -99,6 +99,7 @@ class GeneratePlaylist
             $builder->setTitle('Playlist generated');
             $builder->setDescription('Playlist generated with title: ' . $playlistTitle);
             $builder->setSuccess();
+            $builder->setUrl($playlist[0]);
             $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);
 
             $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);

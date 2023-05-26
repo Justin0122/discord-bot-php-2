@@ -2,12 +2,11 @@
 
 namespace Bot\Commands;
 
-use Bot\SlashIndex;
-use Discord\Builders\Components\ActionRow;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
+use Discord\Builders\MessageBuilder;
 use Bot\Builders\EmbedBuilder;
+use Discord\Discord;
+use Bot\SlashIndex;
 
 class Pagination
 {

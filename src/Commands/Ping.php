@@ -2,14 +2,12 @@
 
 namespace Bot\Commands;
 
-use Bot\Builders\ButtonBuilder;
-use Bot\Builders\MessageBuilder;
-use Discord\Builders\Components\ActionRow;
-use Discord\Builders\Components\Button;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\MessageBuilder;
+use Bot\Builders\ButtonBuilder;
 use Bot\Events\ButtonListener;
+use Bot\Events\Success;
+use Discord\Discord;
 
 
 class Ping
@@ -47,10 +45,7 @@ class Ping
         $firstOption = $optionRepository['test'];
         $value = $firstOption->value;
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Pong!');
-        $builder->setDescription('Pong!');
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, 'Pong!', 'Pong!');
 
         if ($value) {
             $builder->addField('Test', $value, false);
