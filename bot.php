@@ -1,13 +1,10 @@
 <?php
 use Discord\Discord;
-use Discord\Parts\Interactions\Command\Command;
+use Discord\Parts\User\Activity;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Helpers\CommandRegistrar;
-use Bot\Helpers\GetCommand;
-
-
 
 include __DIR__.'/vendor/autoload.php';
 
@@ -30,18 +27,22 @@ try {
 
 $discord->on('ready', function (Discord $discord) {
     echo "Bot is ready!", PHP_EOL;
+                $activity = new Activity($discord, [
+                'type' => Activity::TYPE_PLAYING,
+                'name' => 'PHP'
+            ]);
+            $discord->updatePresence($activity);
+
+//    RemoveAllCommands::removeAllCommands($discord);
     CommandRegistrar::register($discord);
 
 });
 
-
-
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
     $command = CommandRegistrar::getCommandByName($interaction->data->name);
     if ($command) {
-        $command->handle($interaction, $discord);
+        $command->handle($interaction, $discord, $interaction->member->user->id);
     }
 });
-
 
 $discord->run();

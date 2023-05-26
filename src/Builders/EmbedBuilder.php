@@ -2,6 +2,7 @@
 
 namespace Bot\Builders;
 
+use Bot\SlashIndex;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
@@ -10,7 +11,7 @@ use Discord\Parts\Embed\Embed;
 
 class EmbedBuilder extends MessageBuilder
 {
-    private $embed;
+    public $embed;
     private $discord;
 
     public function __construct(Discord $discord)
@@ -107,11 +108,4 @@ class EmbedBuilder extends MessageBuilder
     {
         return $this->embed;
     }
-
-    public function send(): void
-    {
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($this->embed);
-    }
-
 }

@@ -7,9 +7,7 @@ use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Discord\Parts\Embed\Embed;
 use Bot\Builders\EmbedBuilder;
-use GuzzleHttp\Psr7\Message;
 
 
 class Ping
@@ -72,8 +70,8 @@ class Ping
 
         $button->setListener(function (Interaction $interaction) use ($discord) {
             $builder = new EmbedBuilder($discord);
-            $builder->setTitle('Button clicked!');
-            $builder->setDescription('Pong!');
+            $builder->setTitle('Pong!');
+            $builder->setDescription('Button Clicked!');
             $builder->setSuccess();
 
             $messageBuilder = new MessageBuilder();
