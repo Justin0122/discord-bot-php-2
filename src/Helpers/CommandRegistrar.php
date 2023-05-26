@@ -44,26 +44,50 @@ class CommandRegistrar
         }
     }
 
+    private static $commandCache = null;
+
     public static function getCommandByName($command)
     {
-        foreach (glob(__DIR__.'/../Commands/*.php') as $filename) {
-            require_once $filename;
-            $className = 'Bot\Commands\\'.basename($filename, '.php');
-            $commandClass = new $className();
-            if ($commandClass->getName() == $command) {
-                return $commandClass;
-            }
-        }
-        foreach (glob(__DIR__.'/../Commands/*', GLOB_ONLYDIR) as $dir) {
-            foreach (glob($dir.'/*.php') as $filename) {
+        if (self::$commandCache === null) {
+            $commandClasses = [];
+
+            // Scan the Commands directory recursively
+            $commandFiles = self::scanDirectory(__DIR__ . '/../Commands');
+            foreach ($commandFiles as $filename) {
                 require_once $filename;
-                $className = 'Bot\Commands\\' . str_replace('/', '\\', substr($filename, strpos($filename, 'Commands') + strlen('Commands') + 1, -4));
+                $className = 'Bot\\Commands\\' . self::getClassNameFromFilename($filename);
                 $commandClass = new $className();
-                if ($commandClass->getName() == $command) {
-                    return $commandClass;
-                }
+                $commandName = $commandClass->getName();
+                $commandClasses[$commandName] = $commandClass;
+            }
+
+            self::$commandCache = $commandClasses;
+        }
+
+        return self::$commandCache[$command] ?? null;
+    }
+
+    private static function scanDirectory($directory)
+    {
+        $files = [];
+        $items = scandir($directory);
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $path = $directory . '/' . $item;
+            if (is_dir($path)) {
+                $files = array_merge($files, self::scanDirectory($path));
+            } elseif (is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'php') {
+                $files[] = $path;
             }
         }
-        return null;
+        return $files;
+    }
+
+    private static function getClassNameFromFilename($filename)
+    {
+        $relativePath = substr($filename, strpos($filename, 'Commands') + strlen('Commands') + 1, -4);
+        return str_replace('/', '\\', $relativePath);
     }
 }
