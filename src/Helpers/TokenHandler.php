@@ -2,8 +2,8 @@
 
 namespace Bot\Helpers;
 
-use GuzzleHttp\Client;
 use SpotifyWebAPI\SpotifyWebAPI;
+use GuzzleHttp\Client;
 
 class TokenHandler
 {

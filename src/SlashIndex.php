@@ -2,12 +2,12 @@
 
 namespace Bot;
 
+use Discord\Parts\Interactions\Interaction;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
 use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Embed\Embed;
-use Discord\Parts\Interactions\Interaction;
+use Discord\Discord;
 
 class SlashIndex
 {
@@ -80,7 +80,7 @@ class SlashIndex
         return $embed;
     }
 
-    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed): void
+    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $isEdit = false): void
     {
         if ($totalFields > 0) {
             $button1 = $this->paginationButton($discord, true);
@@ -104,7 +104,11 @@ class SlashIndex
 
             $builder->addComponent($row);
 
-            $interaction->respondWithMessage($builder);
+            if ($isEdit) {
+                $interaction->updateOriginalResponse($builder);
+            } else {
+                $interaction->respondWithMessage($builder);
+            }
         }
         else{
             $interaction->respondWithMessage($builder);

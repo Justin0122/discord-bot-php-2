@@ -2,12 +2,12 @@
 
 namespace Bot\Commands;
 
-use Discord\Builders\Components\ActionRow;
-use Discord\Builders\Components\Button;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\EmbedBuilder;
+use Bot\Builders\MessageBuilder;
+use Bot\Builders\ButtonBuilder;
+use Bot\Events\ButtonListener;
+use Bot\Events\Success;
+use Discord\Discord;
 
 
 class Ping
@@ -45,40 +45,16 @@ class Ping
         $firstOption = $optionRepository['test'];
         $value = $firstOption->value;
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Pong!');
-        $builder->setDescription('Pong!');
-        $builder->setSuccess();
+        $builder = Success::sendSuccess($discord, 'Pong!', 'Pong!');
 
         if ($value) {
             $builder->addField('Test', $value, false);
         }
 
-        $button = Button::new(Button::STYLE_SUCCESS)
-            ->setLabel('Click Me')
-            ->setCustomId('click_me')
-            ->setEmoji('👍');
-
-        $row = ActionRow::new()
-            ->addComponent($button);
-
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
-        $messageBuilder->addComponent($row);
-
+        $button = ButtonBuilder::addPrimaryButton('Click me!', 'test');
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
         $interaction->respondWithMessage($messageBuilder);
 
-        $button->setListener(function (Interaction $interaction) use ($discord) {
-            $builder = new EmbedBuilder($discord);
-            $builder->setTitle('Pong!');
-            $builder->setDescription('Button Clicked!');
-            $builder->setSuccess();
-
-            $messageBuilder = new MessageBuilder();
-            $messageBuilder->addEmbed($builder->build());
-
-            $interaction->updateMessage($messageBuilder);
-
-        }, $discord);
+        ButtonListener::listener($discord, $button[1], 'Pong!', 'Button Clicked!');
     }
 }

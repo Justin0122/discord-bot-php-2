@@ -2,13 +2,15 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\Error;
-use DateTime;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Builders\MessageBuilder;
+use Bot\Builders\ButtonBuilder;
 use Bot\Builders\EmbedBuilder;
+use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
+use Bot\Events\Error;
+use Discord\Discord;
+use DateTime;
 
 class GeneratePlaylist
 {
@@ -65,23 +67,15 @@ class GeneratePlaylist
             return;
         }
 
-        $startDate = $startDate ? new DateTime($startDate) : new DateTime();
-        $currentMonth = $startDate->format('m');
-        $currentYear = $startDate->format('Y');
-        $startDate->setDate($currentYear, $currentMonth, 1);
-        $endDate = clone $startDate;
-        $endDate->modify('+1 month');
-        $endDate->modify('-1 day');
+        $startDateString = $startDate ?? null;
+        $dates = $this->calculateMonthRange($startDateString);
+        $startDate = $dates['startDate'];
+        $endDate = $dates['endDate'];
 
-        $builder = new EmbedBuilder($discord);
-        $builder->setTitle('Generating playlist');
         $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
-        $builder->setDescription('Generating playlist with title: ' . $playlistTitle);
-        $builder->setInfo();
 
-        $messageBuilder = new MessageBuilder();
-        $messageBuilder->addEmbed($builder->build());
-        $interaction->respondWithMessage($messageBuilder, false);
+
+        InitialEmbed::Send($interaction, $discord, 'Generating playlist with title: ' . $playlistTitle);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -90,18 +84,47 @@ class GeneratePlaylist
             //parent
         } else {
             //child
-            $spotify = new Spotify();
-            $spotify->generatePlaylist($user_id, $startDate, $endDate, $public);
+            $this->generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle);
+        }
+    }
 
+    private function generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle): void
+    {
+        $spotify = new Spotify();
+        $playlist = $spotify->generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction);
+
+        if ($playlist) {
+            echo $playlist[0] . PHP_EOL;
             $builder = new EmbedBuilder($discord);
-            $builder->setTitle($playlistTitle . ' generated');
-            $builder->setDescription('[Click here to open the playlist](https://open.spotify.com/playlist/' . $spotify->getPlaylistIdByName($user_id, $playlistTitle) . ')' );
+            $builder->setTitle('Playlist generated');
+            $builder->setDescription('Playlist generated with title: ' . $playlistTitle);
             $builder->setSuccess();
+            $builder->setUrl($playlist[0]);
+            $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);
 
-            $messageBuilder = new MessageBuilder();
-            $messageBuilder->addEmbed($builder->build());
+            $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
             $interaction->updateOriginalResponse($messageBuilder);
         }
+        else{
 
+            Error::sendError($interaction, $discord, 'Something went wrong while generating the playlist');
+        }
     }
+
+    function calculateMonthRange($startDateString = null): array
+    {
+        $startDate = $startDateString ? new DateTime($startDateString) : new DateTime();
+        $currentMonth = $startDate->format('m');
+        $currentYear = $startDate->format('Y');
+        $startDate->setDate($currentYear, $currentMonth, 1);
+        $endDate = clone $startDate;
+        $endDate->modify('+1 month');
+        $endDate->modify('-1 day');
+
+        return [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
+    }
+
 }

@@ -2,15 +2,14 @@
 
 namespace Bot\Events;
 
-use Bot\Builders\EmbedBuilder;
-use Discord\Builders\MessageBuilder;
-use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
-
+use Discord\Builders\MessageBuilder;
+use Bot\Builders\EmbedBuilder;
+use Discord\Discord;
 
 class Error
 {
-    public static function sendError(Interaction $interaction, Discord $discord, $message): void
+    public static function sendError(Interaction $interaction, Discord $discord, $message, $isEdit = false): void
     {
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Error');
@@ -19,6 +18,11 @@ class Error
 
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
+
+        if ($isEdit) {
+            $interaction->sendFollowUpMessage($messageBuilder, true);
+            $interaction->deleteOriginalResponse();
+        }
 
         $interaction->respondWithMessage($messageBuilder, true);
     }

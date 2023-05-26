@@ -2,8 +2,8 @@
 
 namespace Bot\Helpers;
 
-use SpotifyWebAPI\Session;
 use SpotifyWebAPI\SpotifyWebAPI;
+use SpotifyWebAPI\Session;
 
 class SessionHandler
 {
