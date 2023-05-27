@@ -1,4 +1,6 @@
 <?php
+
+use Bot\Helpers\RemoveAllCommands;
 use Discord\Discord;
 use Discord\Parts\User\Activity;
 use Discord\WebSockets\Event;
@@ -33,7 +35,7 @@ $discord->on('ready', function (Discord $discord) {
             ]);
             $discord->updatePresence($activity);
 
-//    RemoveAllCommands::removeAllCommands($discord);
+//    RemoveAllCommands::deleteAllCommands($discord);
     CommandRegistrar::register($discord);
 
 });

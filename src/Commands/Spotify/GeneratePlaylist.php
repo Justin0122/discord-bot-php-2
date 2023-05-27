@@ -2,10 +2,10 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\Success;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
-use Bot\Builders\EmbedBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
 use Bot\Events\Error;
@@ -95,10 +95,7 @@ class GeneratePlaylist
 
         if ($playlist) {
             echo $playlist[0] . PHP_EOL;
-            $builder = new EmbedBuilder($discord);
-            $builder->setTitle('Playlist generated');
-            $builder->setDescription('Playlist generated with title: ' . $playlistTitle);
-            $builder->setSuccess();
+            $builder = Success::sendSuccess($discord, 'Playlist generated', 'Playlist generated with title: ' . $playlistTitle);
             $builder->setUrl($playlist[0]);
             $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);
 
@@ -106,7 +103,6 @@ class GeneratePlaylist
             $interaction->updateOriginalResponse($messageBuilder);
         }
         else{
-
             Error::sendError($interaction, $discord, 'Something went wrong while generating the playlist');
         }
     }
