@@ -2,12 +2,12 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\Success;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
+use Bot\Events\Success;
 use Bot\Events\Error;
 use Discord\Discord;
 use DateTime;

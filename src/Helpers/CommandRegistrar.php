@@ -5,15 +5,16 @@ namespace Bot\Helpers;
 use Discord\Parts\Interactions\Command\Command;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RegexIterator;
 use Discord\Discord;
+use RegexIterator;
+use Exception;
 
 class CommandRegistrar
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public static function register(Discord $discord)
+    public static function register(Discord $discord): void
     {
 
         $dirIterator = new RecursiveDirectoryIterator(__DIR__.'/../Commands');
@@ -66,7 +67,7 @@ class CommandRegistrar
         return self::$commandCache[$command] ?? null;
     }
 
-    private static function scanDirectory($directory)
+    private static function scanDirectory($directory): array
     {
         $files = [];
         $items = scandir($directory);
@@ -84,7 +85,7 @@ class CommandRegistrar
         return $files;
     }
 
-    private static function getClassNameFromFilename($filename)
+    private static function getClassNameFromFilename($filename): array|string
     {
         $relativePath = substr($filename, strpos($filename, 'Commands') + strlen('Commands') + 1, -4);
         return str_replace('/', '\\', $relativePath);
