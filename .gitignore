@@ -1,5 +1,5 @@
 .env
 .idea
 vendor
-src/media
+src/media/interact
 src/Commands/Interact/*
