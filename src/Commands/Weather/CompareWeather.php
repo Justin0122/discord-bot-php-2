@@ -31,17 +31,18 @@ class CompareWeather
                 'required' => true
             ],
             [
-                'name' => 'city',
-                'description' => 'The city you want to get the weather from (defaults to capital city)',
-                'type' => 3,
-                'required' => false
-            ],
-            [
                 'name' => 'country2',
                 'description' => 'The country you want to get the weather from',
                 'type' => 3,
                 'required' => true
             ],
+            [
+                'name' => 'city',
+                'description' => 'The city you want to get the weather from (defaults to capital city)',
+                'type' => 3,
+                'required' => false
+            ],
+
             [
                 'name' => 'city2',
                 'description' => 'The city you want to get the weather from (defaults to capital city)',

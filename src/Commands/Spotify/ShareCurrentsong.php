@@ -58,8 +58,8 @@ class ShareCurrentsong
         }
 
         $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:');
-        $builder->addField('Song', $tracks->item->name, true);
 
+        $builder->addField('Song', $tracks->item->name, true);
         $builder->addField('Artist', $tracks->item->artists[0]->name, true);
         $builder->addField('Album', $tracks->item->album->name, true);
         $builder->addField('Duration', gmdate("i:s", $tracks->item->duration_ms / 1000), true);
