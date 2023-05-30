@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\MessageBuilder;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
@@ -23,7 +24,14 @@ class ShareCurrentsong
 
     public function getOptions(): array
     {
-        return [];
+        return [
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
+                'type' => 5,
+                'required' => false
+            ]
+        ];
     }
 
     public function getGuildId(): ?string
@@ -46,15 +54,16 @@ class ShareCurrentsong
         }
     }
 
-    private function getCurrentSong($user_id, $discord, Interaction $interaction)
+    private function getCurrentSong($user_id, $discord, Interaction $interaction): void
     {
+        $optionRepository = $interaction->data->options;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $spotify = new Spotify();
         $tracks = $spotify->getCurrentSong($user_id);
         $me = $spotify->getMe($user_id);
 
         if (!isset($tracks->item->name)){
             Error::sendError($interaction, $discord, 'You are not listening to any song', true);
-            return;
         }
 
         $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:');
@@ -68,8 +77,12 @@ class ShareCurrentsong
 
         $builder->setUrl($tracks->item->external_urls->spotify);
 
-        $interaction->updateOriginalResponse(\Bot\Builders\MessageBuilder::buildMessage($builder));
-
+        $messageBuilder = new \Discord\Builders\MessageBuilder();
+        $messageBuilder->addEmbed($builder->build());
+        $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
+        if ($ephemeral) {
+            $interaction->deleteOriginalResponse();
+        }
     }
 
 
