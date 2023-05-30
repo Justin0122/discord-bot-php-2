@@ -22,6 +22,12 @@ class SlashIndex
         $this->fields = $fields;
     }
 
+    public function setTotalPerPage(int $total): void
+    {
+        $this->perPage = $total;
+        $this->offset = -$total;
+    }
+
     public function paginationButton(Discord $discord, bool $isNextButton): Button
     {
         $label = $isNextButton ? 'Next' : 'Previous';
@@ -97,6 +103,7 @@ class SlashIndex
             foreach ($fields as $field) {
                 $embed->addField($field['name'], $field['value'], $field['inline']);
             }
+
 
             $row = ActionRow::new()
                 ->addComponent($button2)

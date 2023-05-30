@@ -1,12 +1,12 @@
 <?php
 
-use Bot\Helpers\RemoveAllCommands;
-use Discord\Discord;
-use Discord\Parts\User\Activity;
-use Discord\WebSockets\Event;
-use Discord\WebSockets\Intents;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Helpers\RemoveAllCommands;
 use Bot\Helpers\CommandRegistrar;
+use Discord\Parts\User\Activity;
+use Discord\WebSockets\Intents;
+use Discord\WebSockets\Event;
+use Discord\Discord;
 
 include __DIR__.'/vendor/autoload.php';
 
@@ -37,7 +37,6 @@ $discord->on('ready', function (Discord $discord) {
 
 //    RemoveAllCommands::deleteAllCommands($discord);
     CommandRegistrar::register($discord);
-
 });
 
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
