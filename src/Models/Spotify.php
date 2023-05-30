@@ -144,8 +144,6 @@ class Spotify
         $offset = 0;
         $me = $api->me();
 
-
-        //fetch the playlists in batches of 50 (the max)
         while (count($playlists) < $amount) {
             $fetchedPlaylists = $api->getUserPlaylists($me->id, [
                 'limit' => 1,

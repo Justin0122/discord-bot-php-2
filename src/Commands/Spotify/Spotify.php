@@ -68,19 +68,27 @@ class Spotify
 
         InitialEmbed::Send($interaction, $discord,'Fetching your data');
 
-        if ($login) {
-            $this->login($interaction, $discord, $user_id);
-        } elseif ($logout) {
-            $this->logout($interaction, $discord, $user_id);
-        } elseif ($me) {
-            $this->me($interaction, $discord, $user_id, $ephemeral);
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            die('could not fork');
+        } else if ($pid) {
+            //parent
+        } else {
+            $me = $this->connect($user_id);
+            //child
+            if ($login) {
+                $this->login($interaction, $discord, $user_id, $me);
+            } elseif ($logout) {
+                $this->logout($interaction, $discord, $user_id, $me);
+            } elseif ($me) {
+                $this->me($interaction, $discord, $user_id, $ephemeral, $me);
+            }
         }
 
     }
 
-    private function login(Interaction $interaction, Discord $discord, $user_id): void
+    private function login(Interaction $interaction, Discord $discord, $user_id, $me): void
     {
-        $me = $this->connect($user_id);
         if ($me){
             Error::sendError($interaction, $discord, 'You are already connected to Spotify', true);
         }
@@ -93,37 +101,21 @@ class Spotify
         $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
 
         $interaction->sendFollowUpMessage($messageBuilder, true);
-        $interaction->deleteOriginalResponse();    }
+        $interaction->deleteOriginalResponse();
+    }
 
     private function logout(Interaction $interaction, Discord $discord, $user_id): void
     {
         $this->connect($user_id);
 
-        Error::sendError($interaction, $discord, 'Not implemented yet');
+        Error::sendError($interaction, $discord, 'Not implemented yet', true);
     }
 
-    private function connect($user_id): ?object
-        {
-        try {
-            $me = new SpotifyModel();
-            $me = $me->getMe($user_id);
-            if (!$me) {
-                return null;
-            }
-            return $me;
-        } catch (\Exception $e) {
-
-        }
-        return null;
-    }
-
-    private function me(Interaction $interaction, Discord $discord, $user_id, $ephemeral): void
+    private function me(Interaction $interaction, Discord $discord, $user_id, $ephemeral, $me): void
     {
-        $me = $this->connect($user_id);
         if (!$me){
             Error::sendError($interaction, $discord, 'You are not connected to Spotify. Please use /spotify [Login] first', true);
         }
-
         $builder = Success::sendSuccess($discord, $me->display_name);
         $builder->addField('Followers', $me->followers->total, true);
         $builder->addField('Country', $me->country, true);
@@ -138,7 +130,7 @@ class Spotify
                 $songName = $song->name;
                 $artistName = $song->artists[0]->name;
                 $songLink = $song->external_urls->spotify;
-                $topSongsField .= "[{$songName}]({$songLink}) - Artist: {$artistName}\n";
+                $topSongsField .= "[{$songName}]({$songLink}) - {$artistName}\n";
             }
             $builder->addField('Top Songs', $topSongsField, true);
         } else {
@@ -156,13 +148,26 @@ class Spotify
         if ($currentSong->item->external_urls->spotify) {
             $button2 = ButtonBuilder::addLinkButton('Listen along', $currentSong->item->external_urls->spotify);
             $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0], $button2[0]]);
-            $interaction->sendFollowUpMessage($messageBuilder);
-            $interaction->deleteOriginalResponse();
         }
         else {
             $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
-            $interaction->sendFollowUpMessage($messageBuilder);
-            $interaction->deleteOriginalResponse();
         }
+        $interaction->sendFollowUpMessage($messageBuilder);
+        $interaction->deleteOriginalResponse();
+    }
+
+    private function connect($user_id): ?object
+    {
+        try {
+            $me = new SpotifyModel();
+            $me = $me->getMe($user_id);
+            if (!$me) {
+                return null;
+            }
+            return $me;
+        } catch (\Exception $e) {
+
+        }
+        return null;
     }
 }

@@ -62,8 +62,9 @@ class ShareCurrentsong
         $tracks = $spotify->getCurrentSong($user_id);
         $me = $spotify->getMe($user_id);
 
-        if (!isset($tracks->item->name)){
+        if (!isset($tracks->item)) {
             Error::sendError($interaction, $discord, 'You are not listening to any song', true);
+            return;
         }
 
         $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:');
