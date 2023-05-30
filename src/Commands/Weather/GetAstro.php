@@ -8,7 +8,6 @@ use Bot\Events\Success;
 use Bot\Models\Weather;
 use Bot\Events\Error;
 use Discord\Discord;
-use Bot\SlashIndex;
 
 class GetAstro
 {

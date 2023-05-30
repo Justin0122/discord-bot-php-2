@@ -2,7 +2,6 @@
 
 namespace Bot\Commands\Weather;
 
-use Bot\Builders\InitialEmbed;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Events\Success;
@@ -48,6 +47,12 @@ class GetCurrentWeather
                 'description' => 'The city you want to get the weather from',
                 'type' => 3,
                 'required' => false
+            ],
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
+                'type' => 5,
+                'required' => false
             ]
         ];
     }
@@ -61,6 +66,7 @@ class GetCurrentWeather
     {
 
         $optionRepository = $interaction->data->options;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $country = ucfirst($optionRepository['country']->value);
         $city = ucfirst($optionRepository['city']->value) ?? null;
         $country2 = ucfirst($optionRepository['country2']->value) ?? null;
@@ -107,7 +113,7 @@ class GetCurrentWeather
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
 
-        $interaction->respondWithMessage($messageBuilder);
+        $interaction->respondWithMessage($messageBuilder, $ephemeral);
 
 
     }
