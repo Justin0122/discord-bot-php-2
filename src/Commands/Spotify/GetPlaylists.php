@@ -28,7 +28,7 @@ class GetPlaylists
         return [
             [
                 'name' => 'amount',
-                'description' => 'amount of playlists',
+                'description' => 'amount of playlists (default 6 max 50)',
                 'type' => 4,
                 'required' => false
             ]
@@ -64,7 +64,6 @@ class GetPlaylists
     {
         $spotify = new Spotify();
         $playlists = $spotify->getPlaylists($user_id, $amount);
-        var_dump($playlists);
 
         if (!$playlists) {
             Error::sendError($interaction, $discord, 'Something went wrong', true);

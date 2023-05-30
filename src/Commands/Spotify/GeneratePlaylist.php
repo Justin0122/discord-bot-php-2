@@ -88,6 +88,9 @@ class GeneratePlaylist
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     private function generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle): void
     {
         $spotify = new Spotify();
