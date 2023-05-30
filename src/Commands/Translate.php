@@ -2,9 +2,9 @@
 
 namespace Bot\Commands;
 
+use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Events\Success;
-use Discord\Parts\Interactions\Interaction;
 use Discord\Discord;
 
 class Translate
@@ -66,7 +66,7 @@ class Translate
         exec('trans -b -t ' . $to . ' ' . $text . ' -f ' . $from, $output);
         $translation = implode(' ', $output);
 
-        $builder = Success::sendSuccess($discord, 'Translation', $translation);
+        $builder = Success::sendSuccess($discord, 'Translating: ' . $text . ' to "' . $to . '" from "' . $from . '"', $translation);
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $interaction->respondWithMessage($messageBuilder, $ephemeral);
 
