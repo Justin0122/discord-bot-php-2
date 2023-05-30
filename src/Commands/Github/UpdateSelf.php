@@ -22,7 +22,14 @@ class UpdateSelf
 
     public function getOptions(): array
     {
-        return [];
+        return [
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
+                'type' => 5,
+                'required' => false
+            ]
+        ];
     }
 
     public function getGuildId(): ?string

@@ -95,6 +95,11 @@ class EmbedBuilder extends MessageBuilder
         return $this;
     }
 
+    public function addLineBreak(): self
+    {
+        $this->embed->addFieldValues('------------------', '');
+        return $this;
+    }
 
     public function build(): Embed
     {

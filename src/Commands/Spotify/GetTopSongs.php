@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\MessageBuilder;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
@@ -81,7 +82,7 @@ class GetTopSongs
 
         $builder = Success::sendSuccess($discord, 'Your top songs', 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount);
 
-        $messageBuilder = \Bot\Builders\MessageBuilder::buildMessage($builder);
+        $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
 
