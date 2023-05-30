@@ -81,9 +81,7 @@ class ShareCurrentsong
         $messageBuilder = new \Discord\Builders\MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
         $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
-        if ($ephemeral) {
-            $interaction->deleteOriginalResponse();
-        }
+        $interaction->deleteOriginalResponse();
     }
 
 

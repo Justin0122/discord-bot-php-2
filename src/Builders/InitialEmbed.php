@@ -15,6 +15,6 @@ class InitialEmbed
         $builder->setInfo();
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
-        $interaction->respondWithMessage($messageBuilder);
+        $interaction->respondWithMessage($messageBuilder, true);
     }
 }
