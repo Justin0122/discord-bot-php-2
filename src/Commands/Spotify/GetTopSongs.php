@@ -28,7 +28,7 @@ class GetTopSongs
         return [
             [
                 'name' => 'amount',
-                'description' => 'amount of songs (max 24)',
+                'description' => 'amount of songs (default 24 max 50)',
                 'type' => 4,
                 'required' => false
             ]

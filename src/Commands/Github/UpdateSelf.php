@@ -43,6 +43,8 @@ class UpdateSelf
 
     public function handle(Interaction $interaction, Discord $discord): void
     {
+        $optionRepository = $interaction->data->options;
+        $ephemeral = $optionRepository['ephemeral']->value ?? true;
         $botPid = getmypid();
         InitialEmbed::Send($interaction, $discord, 'Updating bot');
 
@@ -53,17 +55,20 @@ class UpdateSelf
             //parent
         } else {
             //child
-            $this->updateSelf($discord, $interaction, $botPid);
+            $this->updateSelf($discord, $interaction, $botPid, $ephemeral);
         }
     }
 
-    public function updateSelf(Discord $discord, Interaction $interaction): void
+    public function updateSelf(Discord $discord, Interaction $interaction, $botPid, $ephemeral): void
     {
         exec('git pull origin main');
 
         $builder = Success::sendSuccess($discord, 'Bot updated', 'Bot has been updated. ' . PHP_EOL . 'Please restart the bot to apply the changes.');
         $messageBuilder = MessageBuilder::buildMessage($builder);
-        $interaction->updateOriginalResponse($messageBuilder);
+        $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
+        if ($ephemeral) {
+            $interaction->deleteOriginalResponse();
+        }
     }
 
 }

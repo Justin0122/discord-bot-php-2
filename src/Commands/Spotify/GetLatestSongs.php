@@ -27,7 +27,7 @@ class GetLatestSongs
         return [
             [
                 'name' => 'amount',
-                'description' => 'amount of songs',
+                'description' => 'amount of songs (default 24 max 50)',
                 'type' => 4,
                 'required' => false
             ]

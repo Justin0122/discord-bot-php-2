@@ -65,7 +65,7 @@ class GetAstro
             Error::sendError($interaction, $discord, 'Something went wrong while getting the astronomical data');
         }
 
-        $builder = Success::sendSuccess($discord, 'Astronomy', 'Here is the astronimical data for ' . $location['city'] . ', ' . $location['country']);
+        $builder = Success::sendSuccess($discord, 'Astronomy', 'Here is the astronomical data for ' . $location['city'] . ', ' . $location['country']);
 
         $builder->addField('Sunrise', $astro['astronomy']['astro']['sunrise'], true);
         $builder->addField('Sunset', $astro['astronomy']['astro']['sunset'], true);
