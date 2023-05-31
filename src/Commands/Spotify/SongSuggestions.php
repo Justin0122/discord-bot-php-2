@@ -2,9 +2,9 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\ButtonBuilder;
-use Bot\Builders\MessageBuilder;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Builders\MessageBuilder;
+use Bot\Builders\ButtonBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
 use Bot\Events\Success;
@@ -41,7 +41,7 @@ class SongSuggestions
             ],
             [
                 'name' => 'genre',
-                'description' => 'Filter the suggestions by genre (default none)',
+                'description' => 'Filter the suggestions by genre (default none) (This does very little)',
                 'type' => 3,
                 'required' => false
             ]
