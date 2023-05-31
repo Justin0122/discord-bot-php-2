@@ -7,7 +7,7 @@ use Discord\Builders\Components\Button;
 
 class ButtonBuilder
 {
-    public static function addLinkButton(string $label, string $url)
+    public static function addLinkButton(string $label, string $url): array
     {
         $button = Button::new(Button::STYLE_LINK)
             ->setLabel($label)
@@ -51,7 +51,7 @@ class ButtonBuilder
         return [$actionRow, $button];
     }
 
-    public static function addDangerButton(string $label, string $custom_id)
+    public static function addDangerButton(string $label, string $custom_id): array
     {
         $button = Button::new(Button::STYLE_DANGER)
             ->setLabel($label)

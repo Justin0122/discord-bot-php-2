@@ -13,7 +13,7 @@ class GetAstro
 {
     public function getName(): string
     {
-        return 'getastro';
+        return 'astronomy';
     }
 
     public function getDescription(): string
@@ -26,13 +26,13 @@ class GetAstro
         return [
             [
                 'name' => 'country',
-                'description' => 'The country you want to get the weather from',
+                'description' => 'The country you want to get the astronomical data of',
                 'type' => 3,
                 'required' => true
             ],
             [
                 'name' => 'city',
-                'description' => 'The city you want to get the weather from',
+                'description' => 'The city you want to get the astronomical data of',
                 'type' => 3,
                 'required' => false
             ],

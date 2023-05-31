@@ -15,7 +15,7 @@ class GetPlaylists
 {
     public function getName(): string
     {
-        return 'getplaylists';
+        return 'playlists';
     }
 
     public function getDescription(): string
@@ -76,7 +76,6 @@ class GetPlaylists
 
         $embedFields = [];
         foreach ($playlists as $playlist) {
-            echo $playlist->name . PHP_EOL;
             $embedFields[] = [
                 'name' => $playlist->name,
                 'value' => 'Total tracks: ' . $playlist->tracks->total,

@@ -36,10 +36,12 @@ class CommandRegistrar
                     echo "Registered command: " . $command->name . " to guild: " . $command->guild_id . PHP_EOL;
                     continue;
                 }
+                else {
 
-                $command = new Command($discord, ['name' => (new $className())->getName(), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
-                $discord->application->commands->save($command);
-                echo "Registered command: " . $command->name . PHP_EOL;
+                    $command = new Command($discord, ['name' => (new $className())->getName(), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
+                    $discord->application->commands->save($command);
+                    echo "Registered command: " . $command->name . PHP_EOL;
+                }
             }
         }
     }

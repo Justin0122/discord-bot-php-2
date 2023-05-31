@@ -14,12 +14,12 @@ class GetForecast
 {
     public function getName(): string
     {
-        return 'getforecast';
+        return 'forecast';
     }
 
     public function getDescription(): string
     {
-        return 'Get the forecast for the next 5 days';
+        return 'Get the forecast for the next 3 days';
     }
 
     public function getOptions(): array
@@ -27,13 +27,13 @@ class GetForecast
         return [
             [
                 'name' => 'country',
-                'description' => 'The country you want to get the weather from',
+                'description' => 'The country you want to get the weather of',
                 'type' => 3,
                 'required' => true
             ],
             [
                 'name' => 'city',
-                'description' => 'The city you want to get the weather from',
+                'description' => 'The city you want to get the weather of',
                 'type' => 3,
                 'required' => false
             ]

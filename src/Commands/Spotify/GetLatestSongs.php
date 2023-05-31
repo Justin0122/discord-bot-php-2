@@ -14,7 +14,7 @@ class GetLatestSongs
 {
     public function getName(): string
     {
-        return 'getlatestsong';
+        return 'latestsongs';
     }
 
     public function getDescription(): string

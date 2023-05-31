@@ -16,7 +16,7 @@ class GeneratePlaylist
 {
     public function getName(): string
     {
-        return 'generateplaylist';
+        return 'playlistgen';
     }
 
     public function getDescription(): string
@@ -94,7 +94,7 @@ class GeneratePlaylist
     private function generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle): void
     {
         $spotify = new Spotify();
-        $playlist = $spotify->generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction);
+        $playlist = $spotify->generatePlaylist($user_id, $startDate, $endDate, $public);
 
         if ($playlist) {
             echo $playlist[0] . PHP_EOL;
@@ -110,6 +110,9 @@ class GeneratePlaylist
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     function calculateMonthRange($startDateString = null): array
     {
         $startDate = $startDateString ? new DateTime($startDateString) : new DateTime();

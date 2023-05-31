@@ -14,7 +14,7 @@ class ShareCurrentsong
 {
     public function getName(): string
     {
-        return 'sharecurrentsong';
+        return 'currentsong';
     }
 
     public function getDescription(): string
