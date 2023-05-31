@@ -2,10 +2,8 @@
 
 namespace Bot\Models;
 
-use Discord\Parts\Interactions\Interaction;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
-use Discord\Discord;
 use DateTime;
 
 class Spotify
@@ -74,7 +72,7 @@ class Spotify
     /**
      * @throws \Exception
      */
-    public function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction): bool|array
+    public function generatePlaylist($user_id, $startDate, $endDate, $public): bool|array
     {
         $api = (new SessionHandler())->setSession($user_id);
         $totalTracks = 250; // Total number of tracks to fetch
@@ -160,6 +158,122 @@ class Spotify
         }
 
         return $playlists;
+    }
+
+    public function getSongSuggestions($user_id, $amount, $genre): array | bool
+    {
+        $api = (new SessionHandler())->setSession($user_id);
+
+        // Get the first 50 top songs of the user
+        $topSongs = $this->getTopSongs($user_id, 50);
+        if (!$topSongs) {
+            return false;
+        }
+        $topSongs = $topSongs->items;
+
+        // Get the first 50 latest songs of the user
+        $latestSongs = $this->getLatestSongs($user_id, 50);
+        if (!$latestSongs) {
+            return false;
+        }
+        $latestSongs = $latestSongs->items;
+
+        // Extract the track IDs from the top songs
+        $topTrackIds = array_map(function ($track) {
+            return $track->id;
+        }, $topSongs);
+
+        // Extract the track IDs from the latest songs
+        $latestTrackIds = array_map(function ($track) {
+            return $track->id ?? null;
+        }, $latestSongs);
+
+        // Merge the top track IDs and the latest track IDs
+        $trackIds = array_merge($topTrackIds, $latestTrackIds);
+
+        // Remove empty track IDs
+        $trackIds = array_filter($trackIds);
+
+        // Shuffle the trackIds array
+        shuffle($trackIds);
+
+        // Get a random selection of seed tracks
+        if ($genre) {
+            $seedTracks = array_slice($trackIds, 0, 4);
+            $recommendations = $api->getRecommendations([
+                'seed_tracks' => $seedTracks,
+                'seed_genres' => $genre,
+                'limit' => $amount
+            ]);
+        }
+        else{
+            $seedTracks = array_slice($trackIds, 0, 5);
+            $recommendations = $api->getRecommendations([
+                'seed_tracks' => $seedTracks,
+                'limit' => $amount
+            ]);
+        }
+
+
+        if (empty($recommendations->tracks)) {
+            return false;
+        }
+
+        return $recommendations->tracks;
+    }
+
+    public function createPlaylist($user_id, bool|array $songSuggestions)
+    {
+        $api = (new SessionHandler())->setSession($user_id);
+
+            $playlistTitle = 'Song Suggestions';
+            $playlist = $api->createPlaylist([
+                'name' => $playlistTitle,
+                'public' => false,
+                'description' =>
+                    'This playlist was generated with your suggested songs.'
+                ]);
+
+            //loop through the song suggestions and add them to the playlist
+            foreach ($songSuggestions as $song) {
+                $api->addPlaylistTracks($playlist->id, $song->uri);
+            }
+
+            return $playlist->external_urls->spotify;
+    }
+
+
+    private function getAudioFeatures($user_id, $trackIds): array | bool
+    {
+        $api = (new SessionHandler())->setSession($user_id);
+        $audioFeatures = [];
+        $offset = 0;
+
+        while (count($audioFeatures) < count($trackIds)) {
+            foreach (array_chunk($trackIds, 100) as $trackIdsChunk) {
+                $fetchedAudioFeatures = $api->getMultipleAudioFeatures($trackIdsChunk);
+            }
+
+
+            $audioFeatures = array_merge($audioFeatures, $fetchedAudioFeatures->audio_features);
+
+            $offset += 100;
+        }
+
+        if (empty($audioFeatures)) {
+            return false;
+        }
+
+        return $audioFeatures;
+    }
+
+    private function getAverage($array, $key): float
+    {
+        $sum = 0;
+        foreach ($array as $item) {
+            $sum += $item->$key;
+        }
+        return $sum / count($array);
     }
 
 }

@@ -19,7 +19,7 @@ class GetForecast
 
     public function getDescription(): string
     {
-        return 'Get the forecast for the next 5 days';
+        return 'Get the forecast for the next 3 days';
     }
 
     public function getOptions(): array

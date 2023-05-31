@@ -56,7 +56,7 @@ class GetTopSongs
 
     }
 
-    private function getTopSongs($user_id, $discord, Interaction $interaction)
+    private function getTopSongs($user_id, $discord, Interaction $interaction): void
     {
 
         $optionRepository = $interaction->data->options;
