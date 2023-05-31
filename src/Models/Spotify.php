@@ -63,9 +63,10 @@ class Spotify
     {
         $amount = $this->checkLimit($amount);
         $api = (new SessionHandler())->setSession($user_id);
-        return $api->getMyTop('tracks', [
+        $topTracks = $api->getMyTop('tracks', [
             'limit' => $amount,
         ]);
+        return $topTracks;
     }
 
     /**
@@ -90,7 +91,8 @@ class Spotify
 
             $addedAt = new DateTime($tracks->items[0]->added_at);
             if ($addedAt < $startDate || (empty($tracks->items))) {
-                break; // We've gone past the start date or there are no more tracks, so stop fetching
+                // We've gone past the start date or there are no more tracks, so stop fetching
+                break;
             }
 
 
@@ -162,13 +164,19 @@ class Spotify
     {
         $api = (new SessionHandler())->setSession($user_id);
 
-        // Get the top and latest songs of the user
+        // Get the first 50 top songs of the user
         $topSongs = $this->getTopSongs($user_id, 50);
-        $latestSongs = $this->getLatestSongs($user_id, 50);
-
-        if (!$topSongs || !$latestSongs) {
+        if (!$topSongs) {
             return false;
         }
+        $topSongs = $topSongs->items;
+
+        // Get the first 50 latest songs of the user
+        $latestSongs = $this->getLatestSongs($user_id, 50);
+        if (!$latestSongs) {
+            return false;
+        }
+        $latestSongs = $latestSongs->items;
 
         // Extract the track IDs from the top songs
         $topTrackIds = array_map(function ($track) {
@@ -180,56 +188,55 @@ class Spotify
             return $track->id ?? null;
         }, $latestSongs);
 
-        // Merge the top track IDs and the latest track IDs and remove any null values
-        $trackIds = array_filter(array_merge($topTrackIds, $latestTrackIds));
+        // Merge the top track IDs and the latest track IDs
+        $trackIds = array_merge($topTrackIds, $latestTrackIds);
 
-        $i = 0;
+        // Remove empty track IDs
+        $trackIds = array_filter($trackIds);
 
-        while ($i < $amount) {
-            // Shuffle the trackIds array
-            shuffle($trackIds);
+        // Shuffle the trackIds array
+        shuffle($trackIds);
 
-            // Get a random selection of seed tracks
-            if ($genre) {
-                $seedTracks = array_slice($trackIds, 0, 4);
-                $recommendations = $api->getRecommendations([
-                    'seed_tracks' => $seedTracks,
-                    'seed_genres' => $genre,
-                    'limit' => 5
-                ]);
-            }
-            else{
-                $seedTracks = array_slice($trackIds, 0, 5);
-                $recommendations = $api->getRecommendations([
-                    'seed_tracks' => $seedTracks,
-                    'limit' => 5
-                ]);
-            }
+        // Get a random selection of seed tracks
+        if ($genre) {
+            $seedTracks = array_slice($trackIds, 0, 4);
+            $recommendations = $api->getRecommendations([
+                'seed_tracks' => $seedTracks,
+                'seed_genres' => $genre,
+                'limit' => $amount
+            ]);
+        }
+        else{
+            $seedTracks = array_slice($trackIds, 0, 5);
+            $recommendations = $api->getRecommendations([
+                'seed_tracks' => $seedTracks,
+                'limit' => $amount
+            ]);
+        }
 
 
-            if (empty($recommendations->tracks)) {
-                return false;
-            }
-            $i += 5;
+        if (empty($recommendations->tracks)) {
+            return false;
         }
 
         return $recommendations->tracks;
     }
 
-    public function createPlaylist($user_id, bool|array $tracks)
+    public function createPlaylist($user_id, bool|array $songSuggestions)
     {
         $api = (new SessionHandler())->setSession($user_id);
 
             $playlistTitle = 'Song Suggestions';
+
             $playlist = $api->createPlaylist([
                 'name' => $playlistTitle,
                 'public' => false,
                 'description' =>
-                    'This playlist was generated with your suggested songs.'
+                    'This playlist was generated based on the songs from your top songs and latest liked songs.'
                 ]);
 
             //loop through the song suggestions and add them to the playlist
-            foreach ($tracks as $song) {
+            foreach ($songSuggestions as $song) {
                 $api->addPlaylistTracks($playlist->id, $song->uri);
             }
 
@@ -246,9 +253,8 @@ class Spotify
         while (count($audioFeatures) < count($trackIds)) {
             foreach (array_chunk($trackIds, 100) as $trackIdsChunk) {
                 $fetchedAudioFeatures = $api->getMultipleAudioFeatures($trackIdsChunk);
+                $audioFeatures = array_merge($audioFeatures, $fetchedAudioFeatures->audio_features);
             }
-
-            $audioFeatures = array_merge($audioFeatures, $fetchedAudioFeatures->audio_features);
 
             $offset += 100;
         }
@@ -259,6 +265,7 @@ class Spotify
 
         return $audioFeatures;
     }
+
 
     private function getAverage($array, $key): float
     {

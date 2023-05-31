@@ -6,6 +6,9 @@ use Discord\Discord;
 
 class RemoveAllCommands
 {
+    /**
+     * @throws \Exception
+     */
     public static function deleteAllCommands(Discord $discord): void
     {
         $discord->application->commands->freshen()->done(function ($commands) {

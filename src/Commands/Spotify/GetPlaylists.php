@@ -15,7 +15,7 @@ class GetPlaylists
 {
     public function getName(): string
     {
-        return 'getplaylists';
+        return 'playlists';
     }
 
     public function getDescription(): string

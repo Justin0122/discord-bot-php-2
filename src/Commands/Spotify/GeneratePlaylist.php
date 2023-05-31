@@ -16,7 +16,7 @@ class GeneratePlaylist
 {
     public function getName(): string
     {
-        return 'generateplaylist';
+        return 'playlistgen';
     }
 
     public function getDescription(): string

@@ -13,7 +13,7 @@ class GetAstro
 {
     public function getName(): string
     {
-        return 'getastro';
+        return 'astronomy';
     }
 
     public function getDescription(): string

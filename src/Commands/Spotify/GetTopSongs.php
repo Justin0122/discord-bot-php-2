@@ -15,7 +15,7 @@ class GetTopSongs
 {
     public function getName(): string
     {
-        return 'gettopsongs';
+        return 'topsongs';
     }
 
     public function getDescription(): string

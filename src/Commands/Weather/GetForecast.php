@@ -14,7 +14,7 @@ class GetForecast
 {
     public function getName(): string
     {
-        return 'getforecast';
+        return 'forecast';
     }
 
     public function getDescription(): string

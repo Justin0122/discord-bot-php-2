@@ -13,7 +13,7 @@ class GetCurrentWeather
 {
     public function getName(): string
     {
-        return 'getcurrentweather';
+        return 'weather';
     }
 
     public function getDescription(): string
