@@ -117,7 +117,7 @@ class Spotify
         if (!$me){
             Error::sendError($interaction, $discord, 'You are not connected to Spotify. Please use /spotify [Login] first', true);
         }
-        $builder = Success::sendSuccess($discord, $me->display_name);
+        $builder = Success::sendSuccess($discord, $me->display_name, '', $interaction);
         $builder->addField('Followers', $me->followers->total, true);
         $builder->addField('Country', $me->country, true);
         $builder->addField('Plan', $me->product, true);

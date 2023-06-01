@@ -59,7 +59,7 @@ class GetForecast
             Error::sendError($interaction, $discord, 'Something went wrong while getting the forecast');
         }
 
-        $builder = Success::sendSuccess($discord, 'Forecast', 'Here is the forecast for the next 3 days for ' . $location['city'] . ', ' . $location['country']);
+        $builder = Success::sendSuccess($discord, 'Forecast', 'Here is the forecast for the next 3 days for ' . $location['city'] . ', ' . $location['country'], $interaction);
         $forecast = $forecast['forecast']['forecastday'];
 
         $embedFields = [];
