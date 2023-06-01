@@ -123,7 +123,6 @@ class Spotify
 
         $playlistUrl = $playlist->external_urls->spotify;
         $playlistId = $playlist->id;
-        $playlistImage = $playlist->images[0]->url;
 
         $trackUris = array_chunk($trackUris, 100);
 
@@ -131,7 +130,7 @@ class Spotify
             $api->addPlaylistTracks($playlist->id, $trackUri);
         }
 
-        return [$playlistUrl, $playlistId, $playlistImage];
+        return [$playlistUrl, $playlistId];
     }
 
     public function getPlaylists($user_id, $amount): array | bool
@@ -243,6 +242,13 @@ class Spotify
             return $playlist->external_urls->spotify;
     }
 
+    public function likeSong(string $id, mixed $int): void
+    {
+        $api = (new SessionHandler())->setSession($id);
+        $api->addMyTracks([$int]);
+        exit();
+    }
+
 
     private function getAudioFeatures($user_id, $trackIds): array | bool
     {
@@ -265,15 +271,4 @@ class Spotify
 
         return $audioFeatures;
     }
-
-
-    private function getAverage($array, $key): float
-    {
-        $sum = 0;
-        foreach ($array as $item) {
-            $sum += $item->$key;
-        }
-        return $sum / count($array);
-    }
-
 }

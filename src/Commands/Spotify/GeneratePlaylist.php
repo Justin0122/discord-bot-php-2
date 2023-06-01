@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
@@ -29,13 +30,19 @@ class GeneratePlaylist
         return [
             [
                 'name' => 'startdate',
-                'description' => 'Start date',
+                'description' => 'Start date (YYYY-MM-DD)',
                 'type' => 3,
-                'required' => false
+                'required' => true
             ],
             [
                 'name' => 'public',
                 'description' => 'Make playlist public',
+                'type' => 5,
+                'required' => false
+            ],
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
                 'type' => 5,
                 'required' => false
             ]
@@ -56,6 +63,7 @@ class GeneratePlaylist
         $optionRepository = $interaction->data->options;
         $startDate = $optionRepository['startdate']->value;
         $public = $optionRepository['public']->value ?? false;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
 
         if ($startDate && new DateTime($startDate) > new DateTime()) {
             Error::sendError($interaction, $discord, 'Start date cannot be in the future');
@@ -72,10 +80,16 @@ class GeneratePlaylist
         $startDate = $dates['startDate'];
         $endDate = $dates['endDate'];
 
+        //if the month is the same as the current month, we can't generate a playlist
+        if ($startDate->format('m') == (new DateTime())->format('m')) {
+            Error::sendError($interaction, $discord, 'You cannot generate a playlist for the current month');
+            return;
+        }
+
         $playlistTitle = 'Liked Songs of ' . $startDate->format('M Y') .'.';
 
 
-        InitialEmbed::Send($interaction, $discord, 'Generating playlist with title: ' . $playlistTitle);
+        InitialEmbed::Send($interaction, $discord, 'Generating playlist with title: ' . $playlistTitle, true);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -84,26 +98,29 @@ class GeneratePlaylist
             //parent
         } else {
             //child
-            $this->generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle);
+            $this->generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle, $ephemeral);
         }
     }
 
     /**
      * @throws \Exception
      */
-    private function generatePlaylist($user_id, $startDate, $endDate, $public, $discord, $interaction, $playlistTitle): void
+    private function generatePlaylist($user_id, $startDate, $endDate, $public, Discord $discord, Interaction $interaction, $playlistTitle, $ephemeral): void
     {
         $spotify = new Spotify();
         $playlist = $spotify->generatePlaylist($user_id, $startDate, $endDate, $public);
+        $me = $spotify->getMe($user_id);
 
         if ($playlist) {
             echo $playlist[0] . PHP_EOL;
-            $builder = Success::sendSuccess($discord, 'Playlist generated', 'Playlist generated with title: ' . $playlistTitle);
+            $builder = Success::sendSuccess($discord, 'Playlist generated for: ' . $me->display_name, 'Playlist generated with title: ' . $playlistTitle);
+            $builder->setFooter($interaction);
             $builder->setUrl($playlist[0]);
             $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);
 
             $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
-            $interaction->updateOriginalResponse($messageBuilder);
+
+            EphemeralResponse::send($interaction, $messageBuilder, $ephemeral);
         }
         else{
             Error::sendError($interaction, $discord, 'Something went wrong while generating the playlist');

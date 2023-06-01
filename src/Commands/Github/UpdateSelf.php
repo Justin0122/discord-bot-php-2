@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Github;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
@@ -25,7 +26,7 @@ class UpdateSelf
         return [
             [
                 'name' => 'ephemeral',
-                'description' => 'Send the message only to you',
+                'description' => 'Send the message only to you (default: true)',
                 'type' => 5,
                 'required' => false
             ]
@@ -46,7 +47,7 @@ class UpdateSelf
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? true;
         $botPid = getmypid();
-        InitialEmbed::Send($interaction, $discord, 'Updating bot');
+        InitialEmbed::Send($interaction, $discord, 'Updating bot', $ephemeral);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -63,12 +64,12 @@ class UpdateSelf
     {
         exec('git pull origin main');
 
-        $builder = Success::sendSuccess($discord, 'Bot updated', 'Bot has been updated. ' . PHP_EOL . 'Please restart the bot to apply the changes.');
+        $builder = Success::sendSuccess($discord, 'Bot updated', 'Bot has been updated. ' . PHP_EOL . 'Please restart the bot to apply the changes.', $interaction);
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
-        if ($ephemeral) {
-            $interaction->deleteOriginalResponse();
-        }
+
+        EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
+
     }
 
 }

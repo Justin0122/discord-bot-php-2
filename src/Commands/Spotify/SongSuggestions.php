@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
@@ -44,6 +45,12 @@ class SongSuggestions
                 'description' => 'Filter the suggestions by genre (default none) (This does very little)',
                 'type' => 3,
                 'required' => false
+            ],
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
+                'type' => 5,
+                'required' => false
             ]
         ];
     }
@@ -55,7 +62,7 @@ class SongSuggestions
 
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
-        InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your song suggestions');
+        InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your song suggestions', true);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -76,6 +83,7 @@ class SongSuggestions
         $amount = $optionRepository['amount']->value ?? 100;
         $playlist = $optionRepository['playlist']->value ?? false;
         $genre = $optionRepository['genre']->value ?? false;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
 
         $spotify = new Spotify();
 
@@ -87,14 +95,16 @@ class SongSuggestions
         }
 
         $embedFields = [];
-        foreach ($songSuggestions as $songSuggestion) {
-            $embedFields[] = [
-                'name' => $songSuggestion->name,
-                'value' => $songSuggestion->artists[0]->name . PHP_EOL . '[Open in Spotify](' . $songSuggestion->external_urls->spotify . ')',
-                'inline' => true
-            ];
+        if (!$playlist) {
+            foreach ($songSuggestions as $songSuggestion) {
+                $embedFields[] = [
+                    'name' => $songSuggestion->name,
+                    'value' => $songSuggestion->artists[0]->name . PHP_EOL . '[Open in Spotify](' . $songSuggestion->external_urls->spotify . ')',
+                    'inline' => true
+                ];
+            }
         }
-        $builder = Success::sendSuccess($discord, 'Song suggestions', 'Here are your song suggestions');
+        $builder = Success::sendSuccess($discord, 'Song suggestions', 'Here are your song suggestions', $interaction);
         if ($playlist) {
             $builder->addField('Playlist', 'A playlist will be created with your song suggestions', false);
         }
@@ -117,10 +127,12 @@ class SongSuggestions
                     exit(1);
                 }
                 else{
-                    $builder2 = Success::sendSuccess($discord, 'Playlist created', 'Your playlist has been created');
+                    $builder2 = Success::sendSuccess($discord, 'Playlist created', 'Your playlist has been created', $interaction);
                     $button = ButtonBuilder::addLinkButton('Open playlist', $playlist);
                     $messageBuilder = MessageBuilder::buildMessage($builder2, [$button[0]]);
-                    $interaction->sendFollowUpMessage($messageBuilder);
+
+                    EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
+
                 }
             }
         }
