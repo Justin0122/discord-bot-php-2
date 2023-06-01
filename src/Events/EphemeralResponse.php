@@ -9,7 +9,7 @@ class EphemeralResponse
     public static function send(Interaction $interaction, $messageBuilder, $ephemeral = false, $isInitialEphemeral = false): void
     {
         if (!$ephemeral || $isInitialEphemeral) {
-            $interaction->sendFollowUpMessage($messageBuilder);
+            $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
             $interaction->deleteOriginalResponse();
         }
 
