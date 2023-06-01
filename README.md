@@ -15,7 +15,7 @@ Through this hobby project, I look forward to enhancing my PHP skills, deepening
 
 - PHP 8.2.5 or higher
 - Composer
-- translate-shell (for the translation command)
+- [translate-shell](https://github.com/soimort/translate-shell) (for the translation command)
 - [Spotify Application](https://developer.spotify.com/dashboard/applications) (for Spotify commands)
 - Required tokens/secrets can be found in the `.env` file.
 
