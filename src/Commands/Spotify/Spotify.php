@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Models\Spotify as SpotifyModel;
 use Bot\Builders\MessageBuilder;
@@ -66,7 +67,7 @@ class Spotify
         $me = $optionRepository['select']->value === 'me';
         $ephemeral = $optionRepository['select']->value ?? false;
 
-        InitialEmbed::Send($interaction, $discord,'Fetching your data');
+        InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -143,7 +144,6 @@ class Spotify
         $currentSong = $spotify->getCurrentSong($user_id);
         $builder->addField('Current Song', $currentSong->item->name . ' - ' . $currentSong->item->artists[0]->name, false ?? 'No song playing');
 
-
         $button = ButtonBuilder::addLinkButton('Open profile', $me->external_urls->spotify);
         if ($currentSong->item->external_urls->spotify) {
             $button2 = ButtonBuilder::addLinkButton('Listen along', $currentSong->item->external_urls->spotify);
@@ -152,8 +152,9 @@ class Spotify
         else {
             $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
         }
-        $interaction->sendFollowUpMessage($messageBuilder);
-        $interaction->deleteOriginalResponse();
+
+        EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
+
     }
 
     private function connect($user_id): ?object

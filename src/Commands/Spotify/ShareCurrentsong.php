@@ -2,10 +2,9 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
-use Bot\Builders\ButtonBuilder;
 use Bot\Builders\MessageBuilder;
-use Bot\Events\ButtonListener;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
 use Bot\Models\Spotify;
@@ -43,7 +42,7 @@ class ShareCurrentsong
 
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
-        InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your current song');
+        InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your current song', true);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -69,14 +68,13 @@ class ShareCurrentsong
             return;
         }
 
-        $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:');
+        $builder = Success::sendSuccess($discord, $me->display_name . ' is listening to:', '', $interaction);
 
         $builder->addField('Song', $tracks->item->name, true);
         $builder->addField('Artist', $tracks->item->artists[0]->name, true);
         $builder->addField('Album', $tracks->item->album->name, true);
         $builder->addField('Duration', gmdate("i:s", $tracks->item->duration_ms / 1000), true);
 
-        $button = ButtonBuilder::addPrimaryButton('Like', 'spotify:track:' . $tracks->item->id);
 
         $builder->setThumbnail($tracks->item->album->images[0]->url);
 
@@ -84,14 +82,10 @@ class ShareCurrentsong
 
         $messageBuilder = new \Discord\Builders\MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
-        $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
+        $messageBuilder = MessageBuilder::buildMessage($builder);
 
-        $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
-        $interaction->deleteOriginalResponse();
-
-//        ButtonListener::listener($discord, $button[1], 'Pong!', 'Button Clicked!');
+        EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
 
     }
-
 
 }

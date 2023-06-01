@@ -41,9 +41,9 @@ class EmbedBuilder extends MessageBuilder
         return $this;
     }
 
-    public function setFooter(string $text, string $iconUrl): self
+    public function setFooter($interaction = null): self
     {
-        $this->embed->setFooter($text, $iconUrl);
+        $this->embed->setFooter('Requested by: ' . $interaction->member->username, $interaction->member->user->avatar);
         return $this;
     }
 

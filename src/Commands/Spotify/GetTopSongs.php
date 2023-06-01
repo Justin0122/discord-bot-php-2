@@ -2,8 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\MessageBuilder;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Models\Spotify;
 use Bot\Events\Success;

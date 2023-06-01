@@ -22,6 +22,7 @@ class Error
         if ($isEdit) {
             $interaction->sendFollowUpMessage($messageBuilder, true);
             $interaction->deleteOriginalResponse();
+            return;
         }
 
         $interaction->respondWithMessage($messageBuilder, true);

@@ -2,6 +2,7 @@
 
 namespace Bot\Helpers;
 
+use GuzzleHttp\Exception\ClientException;
 use SpotifyWebAPI\SpotifyWebAPI;
 use GuzzleHttp\Client;
 
@@ -30,7 +31,7 @@ class TokenHandler
 
         try {
             $response = $client->request('GET', $link);
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (ClientException $e) {
             return false;
         }
         $response = json_decode($response->getBody(), true);
