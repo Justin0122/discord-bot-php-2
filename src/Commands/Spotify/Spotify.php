@@ -65,7 +65,7 @@ class Spotify
         $login = $optionRepository['select']->value === 'login';
         $logout = $optionRepository['select']->value === 'logout';
         $me = $optionRepository['select']->value === 'me';
-        $ephemeral = $optionRepository['select']->value ?? false;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
 
         InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
 
