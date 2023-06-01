@@ -91,7 +91,7 @@ class GetCurrentWeather
             $currentWeather2 = $currentWeather2['current'];
         }
 
-        $builder = Success::sendSuccess($discord, 'Current weather', $message);
+        $builder = Success::sendSuccess($discord, 'Current weather', $message, $interaction);
         $builder->addField('Temperature', $currentWeather['temp_c'] . '°C', true);
         $builder->addField('Condition', $currentWeather['condition']['text'], true);
         $builder->addField('Wind', $currentWeather['wind_kph'] . 'km/h', true);

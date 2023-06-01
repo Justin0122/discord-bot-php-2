@@ -80,7 +80,7 @@ class GetTopSongs
             ];
         }
 
-        $builder = Success::sendSuccess($discord, 'Your top songs', 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount);
+        $builder = Success::sendSuccess($discord, 'Your top songs', 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount, $interaction);
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);

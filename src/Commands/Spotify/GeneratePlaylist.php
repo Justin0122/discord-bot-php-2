@@ -113,7 +113,7 @@ class GeneratePlaylist
 
         if ($playlist) {
             echo $playlist[0] . PHP_EOL;
-            $builder = Success::sendSuccess($discord, 'Playlist generated for: ' . $me->display_name, 'Playlist generated with title: ' . $playlistTitle);
+            $builder = Success::sendSuccess($discord, 'Playlist generated for: ' . $me->display_name, 'Playlist generated with title: ' . $playlistTitle, $interaction);
             $builder->setFooter($interaction);
             $builder->setUrl($playlist[0]);
             $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);

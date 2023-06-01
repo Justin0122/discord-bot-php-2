@@ -63,7 +63,7 @@ class GetLatestSongs
             ];
         }
 
-        $builder = Success::sendSuccess($discord, 'Your latest songs', 'Your latest songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount);
+        $builder = Success::sendSuccess($discord, 'Your latest songs', 'Your latest songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount, $interaction);
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
