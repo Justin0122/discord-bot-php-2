@@ -2,8 +2,10 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Builders\MessageBuilder;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Builders\ButtonBuilder;
+use Bot\Builders\MessageBuilder;
+use Bot\Events\ButtonListener;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
 use Bot\Models\Spotify;
@@ -74,14 +76,21 @@ class ShareCurrentsong
         $builder->addField('Album', $tracks->item->album->name, true);
         $builder->addField('Duration', gmdate("i:s", $tracks->item->duration_ms / 1000), true);
 
+        $button = ButtonBuilder::addPrimaryButton('Like', 'spotify:track:' . $tracks->item->id);
+
         $builder->setThumbnail($tracks->item->album->images[0]->url);
 
         $builder->setUrl($tracks->item->external_urls->spotify);
 
         $messageBuilder = new \Discord\Builders\MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
+
         $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
         $interaction->deleteOriginalResponse();
+
+//        ButtonListener::listener($discord, $button[1], 'Pong!', 'Button Clicked!');
+
     }
 
 
