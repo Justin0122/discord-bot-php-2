@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\EmbedBuilder;
 use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
@@ -35,12 +36,6 @@ class SongSuggestions
                 'required' => false
             ],
             [
-                'name' => 'playlist',
-                'description' => 'Add the suggestions to a playlist',
-                'type' => 5,
-                'required' => false
-            ],
-            [
                 'name' => 'genre',
                 'description' => 'Filter the suggestions by genre (default none) (This does very little)',
                 'type' => 3,
@@ -51,6 +46,26 @@ class SongSuggestions
                 'description' => 'Send the message only to you',
                 'type' => 5,
                 'required' => false
+            ],
+            [
+                'name' => 'mood',
+                'description' => 'Select an option',
+                'type' => 3,
+                'required' => false,
+                'choices' => [
+                    [
+                        'name' => 'Happy',
+                        'value' => 'happy'
+                    ],
+                    [
+                        'name' => 'Sad',
+                        'value' => 'sad'
+                    ],
+                    [
+                        'name' => 'Dance',
+                        'value' => 'dance'
+                    ]
+                ]
             ]
         ];
     }
@@ -64,79 +79,43 @@ class SongSuggestions
     {
         InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your song suggestions', true);
 
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            die('could not fork');
-        } else if ($pid) {
-            //parent
-        } else {
-            //child
-            $this->getSongSuggestions($user_id, $discord, $interaction);
-        }
-
-    }
-
-
-    private function getSongSuggestions($user_id, $discord, Interaction $interaction): void
-    {
         $optionRepository = $interaction->data->options;
         $amount = $optionRepository['amount']->value ?? 100;
-        $playlist = $optionRepository['playlist']->value ?? false;
         $genre = $optionRepository['genre']->value ?? false;
         $ephemeral = $optionRepository['ephemeral']->value ?? false;
+        $mood = $optionRepository['mood']->value ?? false;
+
+        $queue = json_decode(file_get_contents(__DIR__ . '/../../../queue.json'), true);
+        //if the user is already in the queue, send a message that they are already in the queue
+        if (isset($queue[$user_id])) {
+            $builder = new EmbedBuilder($discord);
+            $builder->setTitle('You are already in the queue');
+            $builder->setDescription('Please wait until your song suggestions are ready');
+            $builder->setError();
+            $messageBuilder = MessageBuilder::buildMessage($builder);
+            $interaction->updateOriginalResponse($messageBuilder);
+            return;
+        }
+        $queue[$user_id] = [
+            'amount' => $amount,
+            'genre' => $genre,
+            'mood' => $mood,
+            'user_id' => $user_id,
+        ];
+        file_put_contents(__DIR__ . '/../../../queue.json', json_encode($queue, JSON_PRETTY_PRINT));
+    }
+
+    public function getSongSuggestions($user_id, $amount, $genre, $mood): void
+    {
 
         $spotify = new Spotify();
 
-        $songSuggestions = $spotify->getSongSuggestions($user_id, $amount, $genre);
+        $songSuggestions = $spotify->getSongSuggestions($user_id, $amount, $genre, $mood);
 
-        if ($songSuggestions === false) {
-            Error::sendError($interaction, $discord, 'Something went wrong while fetching your song suggestions');
-            return;
-        }
+        echo 'Song suggestions fetched' . PHP_EOL;
 
-        $embedFields = [];
-        if (!$playlist) {
-            foreach ($songSuggestions as $songSuggestion) {
-                $embedFields[] = [
-                    'name' => $songSuggestion->name,
-                    'value' => $songSuggestion->artists[0]->name . PHP_EOL . '[Open in Spotify](' . $songSuggestion->external_urls->spotify . ')',
-                    'inline' => true
-                ];
-            }
-        }
-        $builder = Success::sendSuccess($discord, 'Song suggestions', 'Here are your song suggestions', $interaction);
-        if ($playlist) {
-            $builder->addField('Playlist', 'A playlist will be created with your song suggestions', false);
-        }
-
-
-        $messageBuilder = MessageBuilder::buildMessage($builder);
-        $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
-        if ($playlist) {
-            $pid = pcntl_fork();
-            if ($pid == -1) {
-                die('could not fork');
-            } else if ($pid) {
-                //parent
-            } else {
-                //child
-                $playlist = $spotify->createPlaylist($user_id, $songSuggestions);
-                if ($playlist === false) {
-                    Error::sendError($interaction, $discord, 'Something went wrong while creating your playlist');
-                    exit(1);
-                }
-                else{
-                    $builder2 = Success::sendSuccess($discord, 'Playlist created', 'Your playlist has been created', $interaction);
-                    $button = ButtonBuilder::addLinkButton('Open playlist', $playlist);
-                    $messageBuilder = MessageBuilder::buildMessage($builder2, [$button[0]]);
-
-                    EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
-
-                }
-            }
-        }
+        $spotify->createPlaylist($user_id, $songSuggestions);
+        echo 'Playlist created' . PHP_EOL;
     }
-
 
 }

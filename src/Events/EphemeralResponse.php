@@ -12,7 +12,6 @@ class EphemeralResponse
             $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
             $interaction->deleteOriginalResponse();
         }
-
         $interaction->updateOriginalResponse($messageBuilder);
     }
 }
