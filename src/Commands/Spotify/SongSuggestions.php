@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Events\Error;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
@@ -65,6 +66,22 @@ class SongSuggestions
                         'value' => 'dance'
                     ]
                 ]
+            ],
+            [
+                'name' => 'queue',
+                'description' => 'Get the current queue position or remove yourself from the queue',
+                'type' => 3,
+                'required' => false,
+                'choices' => [
+                    [
+                        'name' => 'Get your position',
+                        'value' => 'get'
+                    ],
+                    [
+                        'name' => 'Remove me from queue',
+                        'value' => 'remove'
+                    ]
+                ]
             ]
         ];
     }
@@ -79,6 +96,30 @@ class SongSuggestions
 
         $queue = json_decode(file_get_contents(__DIR__ . '/../../../queue.json'), true);
         $position = array_search($user_id, array_keys($queue)) + 1;
+
+        if ($interaction->data->options['queue']->value === 'get') {
+            if (!isset($queue[$user_id])) {
+                Error::sendError($interaction, $discord, 'You are not in the queue');
+                return;
+            }
+            $builder = Success::sendSuccess($discord, 'You are currently in position ' . $position);
+            $messageBuilder = MessageBuilder::buildMessage($builder);
+            $interaction->respondWithMessage($messageBuilder, true);
+            return;
+        }
+
+        if ($interaction->data->options['queue']->value === 'remove') {
+            if (!isset($queue[$user_id])) {
+                Error::sendError($interaction, $discord, 'You are not in the queue');
+                return;
+            }
+            unset($queue[$user_id]);
+            file_put_contents(__DIR__ . '/../../../queue.json', json_encode($queue, JSON_PRETTY_PRINT));
+            $builder = Success::sendSuccess($discord, 'You have been removed from the queue');
+            $messageBuilder = MessageBuilder::buildMessage($builder);
+            $interaction->respondWithMessage($messageBuilder, true);
+            return;
+        }
 
         InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your song suggestions.', true);
 
