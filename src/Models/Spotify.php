@@ -5,6 +5,7 @@ namespace Bot\Models;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
 use DateTime;
+use Dotenv\Dotenv;
 
 class Spotify
 {
@@ -12,6 +13,8 @@ class Spotify
 
     public function __construct()
     {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+        $dotenv->load();
         $this->tokenHandler = new TokenHandler($_ENV['API_URL'], $_ENV['SECURE_TOKEN']);
     }
 

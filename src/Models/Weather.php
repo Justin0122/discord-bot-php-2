@@ -20,10 +20,7 @@ class Weather
 
     public function getWeather($country, $city = null)
     {
-        $apiUrl = $this->apiUrl;
-        $apiKey = $this->apiKey;
-
-        $link = "$apiUrl/current.json?key=$apiKey&q=$city,$country";
+        $link = "$this->apiUrl/current.json?key=$this->apiKey&q=$city,$country";
 
         $client = new Client();
 
@@ -38,10 +35,7 @@ class Weather
 
     public function getForecast($country, $city = null)
     {
-        $apiUrl = $this->apiUrl;
-        $apiKey = $this->apiKey;
-
-        $link = "$apiUrl/forecast.json?key=$apiKey&q=$city,$country&days=3";
+        $link = "$this->apiUrl/forecast.json?key=$this->apiKey&q=$city,$country&days=3";
 
         $client = new Client();
 
@@ -56,10 +50,7 @@ class Weather
 
     public function getAstro(string $country, ?string $city)
     {
-        $apiUrl = $this->apiUrl;
-        $apiKey = $this->apiKey;
-
-        $link = "$apiUrl/astronomy.json?key=$apiKey&q=$city,$country";
+        $link = "$this->apiUrl/astronomy.json?key=$this->apiKey&q=$city,$country";
 
         $client = new Client();
 
@@ -72,7 +63,7 @@ class Weather
         return $response;
     }
 
-    public function getLocation(array $response)
+    public function getLocation(array $response): array
     {
         $location = $response['location'];
         $country = $location['country'];

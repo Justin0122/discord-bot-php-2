@@ -1,6 +1,7 @@
 <?php
 
 use Discord\Parts\Interactions\Interaction;
+use Discord\Exceptions\IntentException;
 use Bot\Helpers\RemoveAllCommands;
 use Bot\Helpers\CommandRegistrar;
 use Discord\Parts\User\Activity;
@@ -22,7 +23,7 @@ try {
         'token' => $_ENV['DISCORD_BOT_TOKEN'],
         'intents' => Intents::getDefaultIntents()
     ]);
-} catch (\Discord\Exceptions\IntentException $e) {
+} catch (IntentException $e) {
     echo $e->getMessage() . PHP_EOL;
     exit(1);
 }

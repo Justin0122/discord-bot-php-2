@@ -3,3 +3,4 @@
 vendor
 src/media/
 src/Commands/Interact/*
+queue.json
