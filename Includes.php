@@ -1,28 +1,16 @@
 <?php
 
-foreach (glob(__DIR__.'/src/Helpers/*.php') as $filename) {
-    include $filename;
-}
+$directories = [
+    'Helpers',
+    'Scheduler',
+    'Events',
+    'Builders',
+    'Models',
+    'Components'
+];
 
-foreach (glob(__DIR__.'/src/Scheduler/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob(__DIR__.'/src/Events/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob(__DIR__.'/src/Builders/*.php') as $filename) {
-    include $filename;
-}
-foreach (glob(__DIR__.'/src/Models/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob(__DIR__.'/src/Components/*.php') as $filename) {
-    include $filename;
-}
-
-foreach (glob(__DIR__.'/src/*.php') as $filename) {
-    include $filename;
+foreach ($directories as $directory) {
+    foreach (glob(__DIR__ . '/src/' . $directory . '/*.php') as $filename) {
+        include $filename;
+    }
 }

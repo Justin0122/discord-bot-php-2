@@ -11,6 +11,7 @@ use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
 
 use Discord\Discord;
+use JetBrains\PhpStorm\NoReturn;
 
 class SongSuggestions
 {
@@ -90,7 +91,7 @@ class SongSuggestions
         if (isset($queue[$user_id])) {
             $builder = new EmbedBuilder($discord);
             $builder->setTitle('You are already in the queue');
-            $builder->setDescription('Please wait until your song suggestions are ready. You are currently in position ' . $position);
+            $builder->setDescription('Please wait until your song suggestions are ready.' . PHP_EOL . 'You are currently in position ' . $position);
             $builder->setError();
             $messageBuilder = MessageBuilder::buildMessage($builder);
             $interaction->updateOriginalResponse($messageBuilder);
@@ -115,11 +116,9 @@ class SongSuggestions
         }
     }
 
-    private function loopOverJson($queue, $interaction, $discord, $userId): void
+    #[NoReturn] private function loopOverJson($queue, $interaction, $discord, $userId): void
     {
         while (true) {
-            $queue = json_decode(file_get_contents(__DIR__ . '/../../../queue.json'), true);
-
             if (!isset($queue[$userId])) {
                 $this->sendFinishedMessage($interaction, $discord);
                 exit(0);
