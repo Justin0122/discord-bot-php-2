@@ -14,3 +14,7 @@ foreach ($directories as $directory) {
         include $filename;
     }
 }
+
+foreach (glob(__DIR__ . '/src/*.php') as $filename) {
+    include $filename;
+}
