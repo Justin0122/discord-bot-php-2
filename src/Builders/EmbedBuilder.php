@@ -101,6 +101,14 @@ class EmbedBuilder extends MessageBuilder
         return $this;
     }
 
+    public function addFirstPage($fields, $amount = 12): void
+    {
+        $fields = array_slice($fields, 0, $amount);
+        foreach ($fields as $field) {
+            $this->embed->addFieldValues($field['name'], $field['value'], $field['inline']);
+        }
+    }
+
     public function build(): Embed
     {
         return $this->embed;

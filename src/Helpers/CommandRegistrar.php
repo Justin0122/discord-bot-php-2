@@ -42,8 +42,27 @@ class CommandRegistrar
                     $discord->application->commands->save($command);
                     echo "Registered command: " . $command->name . PHP_EOL;
                 }
+
+                $category = explode('/', $filename);
+                $category = $category[count($category) - 2];
+                $commands[] = [
+                    'name' => $command->name,
+                    'description' => $command->description,
+                    'options' => $command->options,
+                    'guild_id' => $command->guild_id,
+                    'category' => $category
+                ];
+                //if the guild id is set, remove it from the array. (so it doesn't show up in /help in other guilds for example)
+                if ((new $className())->getGuildId()) {
+                    unset($commands[count($commands) - 1]['guild_id']);
+                }
             }
         }
+        usort($commands, function ($a, $b) {
+            return $a['category'] <=> $b['category'];
+        });
+        $commands = (object) $commands;
+        file_put_contents(__DIR__.'/../../commands.json', json_encode($commands, JSON_PRETTY_PRINT));
     }
 
     private static $commandCache = null;
@@ -92,4 +111,5 @@ class CommandRegistrar
         $relativePath = substr($filename, strpos($filename, 'Commands') + strlen('Commands') + 1, -4);
         return str_replace('/', '\\', $relativePath);
     }
+
 }

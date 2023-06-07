@@ -75,12 +75,14 @@ class GetCurrentWeather
         $weather = new Weather();
         $currentWeather = $weather->getWeather($country, $city);
 
-        if ($country2 && $city2) {
-            $currentWeather2 = $weather->getWeather($country2, $city2);
+        if (!$currentWeather) {
+            Error::sendError($interaction, $discord, 'Something went wrong while getting the weather.' . PHP_EOL . 'Please try again later.');
+            return;
         }
 
-        if (!$currentWeather) {
-            Error::sendError($interaction, $discord, 'Something went wrong while getting the weather');
+
+        if ($country2 && $city2) {
+            $currentWeather2 = $weather->getWeather($country2, $city2);
         }
 
         $message = 'Current weather for ' . ucfirst($currentWeather['location']['name']) . ', ' . ucfirst($currentWeather['location']['country']);

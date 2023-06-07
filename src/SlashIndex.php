@@ -12,8 +12,9 @@ use Discord\Discord;
 class SlashIndex
 {
     public int $perPage = 12;
-    public int $offset = -12;
+    public int $offset = 0;
     public int $total = 0;
+    public int $startingPage = 2;
     public array $fields = [];
 
     public function __construct(array $fields)
@@ -28,13 +29,13 @@ class SlashIndex
         $this->offset = -$total;
     }
 
-    public function paginationButton(Discord $discord, bool $isNextButton): Button
+    public function paginationButton(Discord $discord, bool $isNextButton, $title, $description): Button
     {
         $label = $isNextButton ? 'Next' : 'Previous';
 
         return Button::new(Button::STYLE_PRIMARY)
             ->setLabel($label)
-            ->setListener(function (Interaction $interaction) use ($discord, $isNextButton) {
+            ->setListener(function (Interaction $interaction) use ($discord, $isNextButton, $title, $description) {
                 if ($interaction->member->id !== $interaction->message->interaction->user->id) {
                     $embed = new Embed($discord);
                     $embed->setTitle('Error');
@@ -50,8 +51,8 @@ class SlashIndex
                     $this->incOffset(-$this->perPage);
                 }
 
-                $next = $this->paginationButton($discord, true);
-                $previous = $this->paginationButton($discord, false);
+                $next = $this->paginationButton($discord, true, $title, $description);
+                $previous = $this->paginationButton($discord, false, $title, $description);
 
                 if (($this->getOffset() + $this->perPage) >= $this->getTotal()) {
                     $next->setDisabled(true);
@@ -62,8 +63,8 @@ class SlashIndex
                 }
 
                 $actionRow = ActionRow::new()->addComponent($previous)->addComponent($next);
-                $interaction->message->edit(MessageBuilder::new()->addEmbed($this->getEmbed($discord))->addComponent($actionRow));
-            }, $discord);
+                $interaction->message->edit(MessageBuilder::new()->addEmbed($this->getEmbed($discord, $title, $description))->addComponent($actionRow));
+            }, $discord, $title, $description);
     }
 
     public function incOffset(int $amount): void
@@ -71,10 +72,12 @@ class SlashIndex
         $this->offset += $amount;
     }
 
-    public function getEmbed(Discord $discord): Embed
+    public function getEmbed(Discord $discord, $title = null, $description = null): Embed
     {
         $embed = new Embed($discord);
         $embed->setColor('00ff00');
+        $embed->setTitle($title ?? '');
+        $embed->setDescription($description ?? '');
 
         $fields = array_slice($this->fields, $this->getOffset(), $this->perPage);
         foreach ($fields as $field) {
@@ -86,11 +89,11 @@ class SlashIndex
         return $embed;
     }
 
-    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $isEdit = false): void
+    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $title = '', $description = '', $isEdit = false): void
     {
-        if ($totalFields > 0) {
-            $button1 = $this->paginationButton($discord, true);
-            $button2 = $this->paginationButton($discord, false);
+        if ($totalFields > 4) {
+            $button1 = $this->paginationButton($discord, true, $title, $description);
+            $button2 = $this->paginationButton($discord, false, $title, $description);
             if (($this->getOffset() + 1) === $this->getTotal()) {
                 $button1->setDisabled(true);
             }

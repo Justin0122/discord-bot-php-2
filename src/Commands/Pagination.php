@@ -60,15 +60,17 @@ class Pagination
 
         $slashIndex = new SlashIndex($embedFields);
 
+        $title = 'Pagination test';
+
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Pong!');
-        $builder->setDescription('Pong!');
         $builder->setSuccess();
+        $builder->addFirstPage($embedFields);
 
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
 
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title);
     }
 
 }

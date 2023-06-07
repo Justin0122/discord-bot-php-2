@@ -53,11 +53,11 @@ class GetForecast
 
         $weather = new Weather();
         $forecast = $weather->getForecast($country, $city);
-        $location = $weather->getLocation($forecast);
-
-        if ($forecast === null) {
-            Error::sendError($interaction, $discord, 'Something went wrong while getting the forecast');
+        if (!$forecast) {
+            Error::sendError($interaction, $discord, 'Something went wrong while getting the forecast.' . PHP_EOL . 'Please try again later.');
+            return;
         }
+        $location = $weather->getLocation($forecast);
 
         $builder = Success::sendSuccess($discord, 'Forecast', 'Here is the forecast for the next 3 days for ' . $location['city'] . ', ' . $location['country'], $interaction);
         $forecast = $forecast['forecast']['forecastday'];
@@ -76,7 +76,7 @@ class GetForecast
             $avgTemp += $day['day']['avgtemp_c'];
             $avgHumidity += $day['day']['avghumidity'];
         }
-        $builder->addField('Average temp (3 days)', $avgTemp / 3 . '°C', true);
+        $builder->addField('Average temp (3 days)', round($avgTemp / 3, 2) . '°C', true);
         $builder->addField('Average humidity (3 days)', round($avgHumidity / 3, 2) . '%', true);
         $builder->addLineBreak();
 
@@ -84,7 +84,6 @@ class GetForecast
             $day['date'] = date('l \t\h\e jS \o\f F', strtotime($day['date']));
             $builder->addField('Condition for: ' . $day['date'], $day['day']['condition']['text'] . " " . $day['day']['avgtemp_c'] . '°C ' . $day['day']['totalprecip_mm'] . 'mm rain', false);
         }
-
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);

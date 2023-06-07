@@ -2,9 +2,9 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Models\Spotify as SpotifyModel;
+use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
 use Bot\Builders\InitialEmbed;
@@ -142,7 +142,7 @@ class Spotify
         }
 
         $currentSong = $spotify->getCurrentSong($user_id);
-        $builder->addField('Current Song', $currentSong->item->name . ' - ' . $currentSong->item->artists[0]->name, false ?? 'No song playing');
+        $builder->addField('Currently listening to ', $currentSong->item->name . ' - ' . $currentSong->item->artists[0]->name, false ?? 'No song playing');
 
         $button = ButtonBuilder::addLinkButton('Open profile', $me->external_urls->spotify);
         if ($currentSong->item->external_urls->spotify) {

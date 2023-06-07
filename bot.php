@@ -1,18 +1,17 @@
 <?php
 
 use Discord\Parts\Interactions\Interaction;
+use Discord\Exceptions\IntentException;
 use Bot\Helpers\RemoveAllCommands;
 use Bot\Helpers\CommandRegistrar;
 use Discord\Parts\User\Activity;
 use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Discord;
+use Dotenv\Dotenv;
 
 include __DIR__.'/vendor/autoload.php';
-
 include 'Includes.php';
-
-use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -22,7 +21,7 @@ try {
         'token' => $_ENV['DISCORD_BOT_TOKEN'],
         'intents' => Intents::getDefaultIntents()
     ]);
-} catch (\Discord\Exceptions\IntentException $e) {
+} catch (IntentException $e) {
     echo $e->getMessage() . PHP_EOL;
     exit(1);
 }
@@ -37,6 +36,9 @@ $discord->on('ready', function (Discord $discord) {
 
 //    RemoveAllCommands::deleteAllCommands($discord);
     CommandRegistrar::register($discord);
+
+    generateCommandsTable();
+
 });
 
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {

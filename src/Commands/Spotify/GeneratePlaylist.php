@@ -2,8 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
 use Bot\Builders\InitialEmbed;
@@ -32,7 +32,7 @@ class GeneratePlaylist
                 'name' => 'startdate',
                 'description' => 'Start date (YYYY-MM-DD)',
                 'type' => 3,
-                'required' => true
+                'required' => true,
             ],
             [
                 'name' => 'public',

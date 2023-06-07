@@ -5,6 +5,7 @@ namespace Bot\Models;
 use Bot\Helpers\SessionHandler;
 use Bot\Helpers\TokenHandler;
 use DateTime;
+use Dotenv\Dotenv;
 
 class Spotify
 {
@@ -12,6 +13,8 @@ class Spotify
 
     public function __construct()
     {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+        $dotenv->load();
         $this->tokenHandler = new TokenHandler($_ENV['API_URL'], $_ENV['SECURE_TOKEN']);
     }
 
@@ -159,7 +162,7 @@ class Spotify
         return $playlists;
     }
 
-    public function getSongSuggestions($user_id, $amount, $genre): array | bool
+    public function getSongSuggestions($user_id, $amount, $genre, $mood): array | bool
     {
         $api = (new SessionHandler())->setSession($user_id);
 
@@ -193,6 +196,16 @@ class Spotify
         // Remove empty track IDs
         $trackIds = array_filter($trackIds);
 
+        $audioFeatures = $this->getAudioFeatures($user_id, $trackIds);
+        if (!$audioFeatures) {
+            return false;
+        }
+
+        $highestValues = $this->getHighestValues($audioFeatures);
+        $lowestValues = $this->getLowestValues($audioFeatures);
+//        $moodValues = $this->moodBasedValues($audioFeatures, $mood);
+
+
         // Shuffle the trackIds array
         shuffle($trackIds);
 
@@ -202,14 +215,33 @@ class Spotify
             $recommendations = $api->getRecommendations([
                 'seed_tracks' => $seedTracks,
                 'seed_genres' => $genre,
-                'limit' => $amount
+                'limit' => $amount,
             ]);
         }
         else{
             $seedTracks = array_slice($trackIds, 0, 5);
             $recommendations = $api->getRecommendations([
                 'seed_tracks' => $seedTracks,
-                'limit' => $amount
+                'limit' => $amount,
+                'min_acousticness' => $lowestValues['acousticness'],
+                'max_acousticness' => $highestValues['acousticness'],
+                'min_danceability' => $lowestValues['danceability'],
+                'max_danceability' => $highestValues['danceability'],
+                'min_energy' => $lowestValues['energy'],
+                'max_energy' => $highestValues['energy'],
+                'min_instrumentalness' => $lowestValues['instrumentalness'],
+                'max_instrumentalness' => $highestValues['instrumentalness'],
+                'min_liveness' => $lowestValues['liveness'],
+                'max_liveness' => $highestValues['liveness'],
+                'min_loudness' => $lowestValues['loudness'],
+                'max_loudness' => $highestValues['loudness'],
+                'min_speechiness' => $lowestValues['speechiness'],
+                'max_speechiness' => $highestValues['speechiness'],
+                'min_tempo' => $lowestValues['tempo'],
+                'max_tempo' => $highestValues['tempo'],
+                'min_valence' => $lowestValues['valence'],
+                'max_valence' => $highestValues['valence'],
+
             ]);
         }
 
@@ -242,27 +274,16 @@ class Spotify
             return $playlist->external_urls->spotify;
     }
 
-    public function likeSong(string $id, mixed $int): void
-    {
-        $api = (new SessionHandler())->setSession($id);
-        $api->addMyTracks([$int]);
-        exit();
-    }
-
-
     private function getAudioFeatures($user_id, $trackIds): array | bool
     {
         $api = (new SessionHandler())->setSession($user_id);
         $audioFeatures = [];
-        $offset = 0;
 
         while (count($audioFeatures) < count($trackIds)) {
             foreach (array_chunk($trackIds, 100) as $trackIdsChunk) {
                 $fetchedAudioFeatures = $api->getMultipleAudioFeatures($trackIdsChunk);
                 $audioFeatures = array_merge($audioFeatures, $fetchedAudioFeatures->audio_features);
             }
-
-            $offset += 100;
         }
 
         if (empty($audioFeatures)) {
@@ -271,4 +292,100 @@ class Spotify
 
         return $audioFeatures;
     }
+
+    private function getHighestValues($audioFeatures): array
+    {
+        $highestDanceability = max(array_column($audioFeatures, 'danceability'));
+        $highestEnergy = max(array_column($audioFeatures, 'energy'));
+        $highestSpeechiness = max(array_column($audioFeatures, 'speechiness'));
+        $highestAcousticness = max(array_column($audioFeatures, 'acousticness'));
+        $highestInstrumentalness = max(array_column($audioFeatures, 'instrumentalness'));
+        $highestLiveness = max(array_column($audioFeatures, 'liveness'));
+        $highestValence = max(array_column($audioFeatures, 'valence'));
+        $highestTempo = max(array_column($audioFeatures, 'tempo'));
+        $highestLoudness = max(array_column($audioFeatures, 'loudness'));
+        $highestDuration = max(array_column($audioFeatures, 'duration_ms'));
+
+        $highestValues = [
+            'danceability' => $highestDanceability,
+            'energy' => $highestEnergy,
+            'speechiness' => $highestSpeechiness,
+            'acousticness' => $highestAcousticness,
+            'instrumentalness' => $highestInstrumentalness,
+            'liveness' => $highestLiveness,
+            'valence' => $highestValence,
+            'tempo' => $highestTempo,
+            'loudness' => $highestLoudness,
+            'duration_ms' => $highestDuration,
+        ];
+        return $highestValues;
+    }
+
+    private function getLowestValues($audioFeatures): array
+    {
+        $lowestDanceability = min(array_column($audioFeatures, 'danceability'));
+        $lowestEnergy = min(array_column($audioFeatures, 'energy'));
+        $lowestSpeechiness = min(array_column($audioFeatures, 'speechiness'));
+        $lowestAcousticness = min(array_column($audioFeatures, 'acousticness'));
+        $lowestInstrumentalness = min(array_column($audioFeatures, 'instrumentalness'));
+        $lowestLiveness = min(array_column($audioFeatures, 'liveness'));
+        $lowestValence = min(array_column($audioFeatures, 'valence'));
+        $lowestTempo = min(array_column($audioFeatures, 'tempo'));
+        $lowestLoudness = min(array_column($audioFeatures, 'loudness'));
+        $lowestDuration = min(array_column($audioFeatures, 'duration_ms'));
+
+        $lowestValues = [
+            'danceability' => $lowestDanceability,
+            'energy' => $lowestEnergy,
+            'speechiness' => $lowestSpeechiness,
+            'acousticness' => $lowestAcousticness,
+            'instrumentalness' => $lowestInstrumentalness,
+            'liveness' => $lowestLiveness,
+            'valence' => $lowestValence,
+            'tempo' => $lowestTempo,
+            'loudness' => $lowestLoudness,
+            'duration_ms' => $lowestDuration,
+        ];
+        return $lowestValues;
+    }
+
+//    //make a function that, based on the user's mood selection (happy, sad, angry, etc), will return a list of songs that match that mood
+//    private function moodBasedValues($audioFeatures, $mood): array
+//    {
+//        $values = [];
+//        if ($mood = "happy") {
+//            $values = [
+//                'acousticness' => ['min' => max(0.2, $audioFeatures['acousticness']['min']), 'max' => min(0.8, $audioFeatures['acousticness']['max'])],
+//                'danceability' => ['min' => max(0.6, $audioFeatures['danceability']['min']), 'max' => min(1.0, $audioFeatures['danceability']['max'])],
+//                'energy' => ['min' => max(0.7, $audioFeatures['energy']['min']), 'max' => min(1.0, $audioFeatures['energy']['max'])],
+//                'instrumentalness' => ['min' => max(0, $audioFeatures['instrumentalness']['min']), 'max' => min(0.4, $audioFeatures['instrumentalness']['max'])],
+//                'liveness' => ['min' => max(0.2, $audioFeatures['liveness']['min']), 'max' => min(1.0, $audioFeatures['liveness']['max'])],
+//                'loudness' => ['min' => max(-10, $audioFeatures['loudness']['min']), 'max' => min(0, $audioFeatures['loudness']['max'])],
+//                'speechiness' => ['min' => max(0, $audioFeatures['speechiness']['min']), 'max' => min(0.3, $audioFeatures['speechiness']['max'])],
+//                'tempo' => ['min' => max(100, $audioFeatures['tempo']['min']), 'max' => min(130, $audioFeatures['tempo']['max'])],
+//                'valence' => ['min' => max(0.6, $audioFeatures['valence']['min']), 'max' => min(1.0, $audioFeatures['valence']['max'])],
+//            ];
+//        } elseif ($mood = "sad") {
+//            $values = [
+//                'acousticness' => ['min' => max(0.5, $audioFeatures['acousticness']['min']), 'max' => min(1.0, $audioFeatures['acousticness']['max'])],
+//                'danceability' => ['min' => max(0, $audioFeatures['danceability']['min']), 'max' => min(0.4, $audioFeatures['danceability']['max'])],
+//                'energy' => ['min' => max(0, $audioFeatures['energy']['min']), 'max' => min(0.4, $audioFeatures['energy']['max'])],
+//                'instrumentalness' => ['min' => max(0, $audioFeatures['instrumentalness']['min']), 'max' => min(0.4, $audioFeatures['instrumentalness']['max'])],
+//                'liveness' => ['min' => max(0, $audioFeatures['liveness']['min']), 'max' => min(0.4, $audioFeatures['liveness']['max'])],
+//                'loudness' => ['min' => max(-15, $audioFeatures['loudness']['min']), 'max' => min(-5, $audioFeatures['loudness']['max'])],
+//                'speechiness' => ['min' => max(0, $audioFeatures['speechiness']['min']), 'max' => min(0.3, $audioFeatures['speechiness']['max'])],
+//                'tempo' => ['min' => max(50, $audioFeatures['tempo']['min']), 'max' => min(90, $audioFeatures['tempo']['max'])],
+//                'valence' => ['min' => max(0, $audioFeatures['valence']['min']), 'max' => min(0.5, $audioFeatures['valence']['max'])],
+//            ];
+//        } elseif ($mood = "angry") {
+//        } elseif ($mood = "chill") {
+//        } elseif ($mood = "romantic") {
+//        } elseif ($mood = "party") {
+//        } elseif ($mood = "workout") {
+//        } elseif ($mood = "focus") {
+//        } elseif ($mood = "sleep") {
+//        } elseif ($mood = "study") {
+//        }
+//        return $values;
+//    }
 }

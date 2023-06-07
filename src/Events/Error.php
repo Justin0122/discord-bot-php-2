@@ -9,7 +9,7 @@ use Discord\Discord;
 
 class Error
 {
-    public static function sendError(Interaction $interaction, Discord $discord, $message, $isEdit = false): void
+    public static function sendError(Interaction $interaction, Discord $discord, $message, $isEdit = false, $isOriginalEpemeral = false): void
     {
         $builder = new EmbedBuilder($discord);
         $builder->setTitle('Error');
@@ -18,6 +18,11 @@ class Error
 
         $messageBuilder = new MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
+
+        if ($isOriginalEpemeral) {
+            $interaction->updateOriginalResponse($messageBuilder);
+            return;
+        }
 
         if ($isEdit) {
             $interaction->sendFollowUpMessage($messageBuilder, true);

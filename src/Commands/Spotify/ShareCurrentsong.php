@@ -2,8 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
@@ -64,7 +64,7 @@ class ShareCurrentsong
         $me = $spotify->getMe($user_id);
 
         if (!isset($tracks->item)) {
-            Error::sendError($interaction, $discord, 'You are not listening to any song', true);
+            Error::sendError($interaction, $discord, 'You are not listening to any song', true, true);
             return;
         }
 
