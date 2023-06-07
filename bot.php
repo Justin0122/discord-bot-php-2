@@ -8,12 +8,10 @@ use Discord\Parts\User\Activity;
 use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Discord;
+use Dotenv\Dotenv;
 
 include __DIR__.'/vendor/autoload.php';
-
 include 'Includes.php';
-
-use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();

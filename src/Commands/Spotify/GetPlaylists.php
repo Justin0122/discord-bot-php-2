@@ -84,6 +84,7 @@ class GetPlaylists
         }
 
         $builder = Success::sendSuccess($discord, 'Playlists of ' . $me->display_name, 'Total playlists: ' . count($playlists), $interaction);
+        $builder->addFirstPage($embedFields);
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);

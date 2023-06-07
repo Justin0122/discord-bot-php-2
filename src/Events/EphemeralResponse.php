@@ -13,10 +13,18 @@ class EphemeralResponse
             return;
         }
 
+        if ($ephemeral && !$isInitialEphemeral)
+        {
+            $interaction->respondWithMessage($messageBuilder, $ephemeral);
+            return;
+        }
+
         if (!$ephemeral || $isInitialEphemeral) {
             $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
             $interaction->deleteOriginalResponse();
+            return;
         }
+
         $interaction->updateOriginalResponse($messageBuilder);
     }
 }

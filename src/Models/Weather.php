@@ -63,12 +63,16 @@ class Weather
         return $response;
     }
 
-    public function getLocation(array $response): array
+    public function getLocation(array $response): array | null
     {
+        try{
         $location = $response['location'];
         $country = $location['country'];
         $city = $location['name'];
         $region = $location['region'];
+        } catch (\Exception $e) {
+            return null;
+        }
 
         return [
             'country' => $country,

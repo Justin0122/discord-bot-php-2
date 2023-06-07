@@ -2,7 +2,6 @@
 
 namespace Bot\Commands\Spotify;
 
-use Bot\Events\Error;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
@@ -10,9 +9,8 @@ use Bot\Builders\ButtonBuilder;
 use Bot\Builders\EmbedBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
-
+use Bot\Events\Error;
 use Discord\Discord;
-use JetBrains\PhpStorm\NoReturn;
 
 class SongSuggestions
 {
@@ -157,7 +155,7 @@ class SongSuggestions
         }
     }
 
-    #[NoReturn] private function loopOverJson($queue, $interaction, $discord, $userId): void
+    private function loopOverJson($queue, $interaction, $discord, $userId): void
     {
         while (true) {
             if (!isset($queue[$userId])) {

@@ -42,8 +42,19 @@ class CommandRegistrar
                     $discord->application->commands->save($command);
                     echo "Registered command: " . $command->name . PHP_EOL;
                 }
+                $commands[] = [
+                    'name' => $command->name,
+                    'description' => $command->description,
+                    'options' => $command->options,
+                    'guild_id' => $command->guild_id
+                ];
             }
         }
+        usort($commands, function ($a, $b) {
+            return $a['name'] <=> $b['name'];
+        });
+        $commands = (object) $commands;
+        file_put_contents(__DIR__.'/../../commands.json', json_encode($commands, JSON_PRETTY_PRINT));
     }
 
     private static $commandCache = null;
@@ -91,5 +102,28 @@ class CommandRegistrar
     {
         $relativePath = substr($filename, strpos($filename, 'Commands') + strlen('Commands') + 1, -4);
         return str_replace('/', '\\', $relativePath);
+    }
+
+    public static function getAllCommands(): array
+    {
+        $commands = [];
+        $dirIterator = new RecursiveDirectoryIterator(__DIR__.'/../Commands');
+        $iterator = new RecursiveIteratorIterator($dirIterator, RecursiveIteratorIterator::LEAVES_ONLY);
+        $phpFiles = new RegexIterator($iterator, '/^.+\.php$/i', RegexIterator::GET_MATCH);
+
+        foreach ($phpFiles as $phpFile) {
+            $filename = $phpFile[0];
+            require_once $filename;
+
+            $className = 'Bot\\Commands\\' . str_replace('/', '\\', substr($filename, strlen(__DIR__.'/../Commands/'), -4));
+
+            if (class_exists($className)) {
+                $commands[] = [
+                    'name' => (new $className())->getName(),
+                    'description' => (new $className())->getDescription()
+                ];
+            }
+        }
+        return $commands;
     }
 }

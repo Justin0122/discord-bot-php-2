@@ -59,14 +59,13 @@ class GetAstro
 
         $weather = new Weather();
         $astro = $weather->getAstro($country, $city);
+        if (!$astro) {
+            Error::sendError($interaction, $discord, 'Something went wrong while getting the astronomical data' . PHP_EOL . 'Please try again later.');
+            return;
+        }
         $location = $weather->getLocation($astro);
 
-        if ($astro === null) {
-            Error::sendError($interaction, $discord, 'Something went wrong while getting the astronomical data');
-        }
-
         $builder = Success::sendSuccess($discord, 'Astronomy', 'Here is the astronomical data for ' . $location['city'] . ', ' . $location['country'], $interaction);
-
         $builder->addField('Sunrise', $astro['astronomy']['astro']['sunrise'], true);
         $builder->addField('Sunset', $astro['astronomy']['astro']['sunset'], true);
         $builder->addField('Moonrise', $astro['astronomy']['astro']['moonrise'], true);

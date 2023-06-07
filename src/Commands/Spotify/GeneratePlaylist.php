@@ -32,7 +32,7 @@ class GeneratePlaylist
                 'name' => 'startdate',
                 'description' => 'Start date (YYYY-MM-DD)',
                 'type' => 3,
-                'required' => true
+                'required' => true,
             ],
             [
                 'name' => 'public',

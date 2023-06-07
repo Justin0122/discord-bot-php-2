@@ -80,11 +80,14 @@ class GetTopSongs
             ];
         }
 
-        $builder = Success::sendSuccess($discord, 'Your top songs', 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount, $interaction);
+        $title = 'Your top songs';
+        $description = 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount;
+        $builder = Success::sendSuccess($discord, $title, $description, $interaction);
+        $builder->addFirstPage($embedFields);
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title, $description, true);
 
     }
 

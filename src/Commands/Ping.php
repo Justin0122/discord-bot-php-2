@@ -2,6 +2,7 @@
 
 namespace Bot\Commands;
 
+use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
@@ -26,9 +27,9 @@ class Ping
     {
         return [
             [
-                'name' => 'test',
-                'description' => 'test',
-                'type' => 3,
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you',
+                'type' => 5,
                 'required' => false
             ]
         ];
@@ -42,18 +43,11 @@ class Ping
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;
-        $firstOption = $optionRepository['test'];
-        $value = $firstOption->value;
-
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $builder = Success::sendSuccess($discord, 'Pong!', 'Pong!');
-
-        if ($value) {
-            $builder->addField('Test', $value, false);
-        }
-
         $button = ButtonBuilder::addPrimaryButton('Click me!', 'test');
         $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
-        $interaction->respondWithMessage($messageBuilder);
+        $interaction->respondWithMessage($messageBuilder, $ephemeral);
 
         ButtonListener::listener($discord, $button[1], 'Pong!', 'Button Clicked!');
     }
