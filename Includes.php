@@ -6,7 +6,8 @@ $directories = [
     'Events',
     'Builders',
     'Models',
-    'Components'
+    'Components',
+    'utils'
 ];
 
 foreach ($directories as $directory) {

@@ -2,6 +2,6 @@
 .idea
 vendor
 src/media/
-src/Commands/Interact/*
+src/Commands/Interact
 queue.json
 commands.json

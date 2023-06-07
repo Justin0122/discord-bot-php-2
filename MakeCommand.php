@@ -6,6 +6,7 @@ if ($argc < 2) {
 }
 
 $commandName = $argv[1];
+$commandNameNonCapitalized = lcfirst($commandName);
 $commandDirectory = $argc > 2 ? $argv[2] : '';
 $commandPath = __DIR__ . "/src/Commands/" . ($commandDirectory ? "$commandDirectory/" : "") . "$commandName.php";
 $namespace = "Bot\Commands" . ($commandDirectory ? "\\$commandDirectory" : "");
@@ -17,7 +18,7 @@ namespace $namespace;
 use Discord\Parts\Interactions\Interaction;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
-use Discord\Builders\MessageBuilder;
+use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
 use Bot\Events\ButtonListener;
 use Discord\Parts\Embed\Embed;
@@ -28,7 +29,7 @@ class $commandName
 {
     public function getName(): string
     {
-        return '$commandName';
+        return '$commandNameNonCapitalized';
     }
 
     public function getDescription(): string

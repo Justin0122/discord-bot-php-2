@@ -38,25 +38,23 @@ Through this hobby project, I look forward to enhancing my PHP skills, deepening
 
 To generate a new command file, run `php MakeCommand.php [Command] [Command Directory]`. This will create a new command file in the `src/Commands/[Command Directory]` directory. The command file will be named `[Command].php` and will contain a basic template for a command.
 
-## Slash Commands
 | Category         | Command                                        | Description                                                                |
 |------------------|------------------------------------------------|----------------------------------------------------------------------------|
-| Basic commands   | `/ping`                                        | Replies with "pong" and a simple button to test if the buttons are working |
-|                  | `/Pagination [Amount]`                         | A simple pagination example with buttons.                                  |
-|                  | `/Translate [Text] [To] [From] [Ephemeral]`    | Translates a message to a given language.                                  |
-| Weather commands | `/Astronomy [Country] [City]`                  | Shows astronomy data for a given location.                                 |
-|                  | `/Weather [Country] [City]`                    | Shows weather data for a given location.                                   |
-|                  | `/Forecast [Country] [City]`                   | Shows the weather forecast for a given location (3 days).                  |
-| Spotify commands | `/Spotify [Login, Logout, Me]`                 | Performs login, logout, or displays user profile.                          |
-|                  | `/Songsuggestions [Amount] [Playlist] [Genre]` | Shows song suggestions and optionally adds them to a playlist.             |
-|                  | `/Topsongs [Amount]`                           | Shows your top songs.                                                      |
-|                  | `/Latestsongs [Amount]`                        | Shows your latest liked songs.                                             |
-|                  | `/Playlists [Amount]`                          | Shows your playlists.                                                      |
-|                  | `/Playlistgen [startdate] [public]`            | Generates a playlist based on your top songs.                              |
-|                  | `/Currentsong`                                 | Displays the currently playing song.                                       |
-| GitHub commands  | `/Updateself`                                  | Updates the bot to the latest version.                                     |
-
-
+| Commands   | `/ping`                         | Ping the bot to check if it is online                                 |
+| Commands   | `/translate`                         | translate text                                 |
+| Commands   | `/pagination`                         | test pagination                                 |
+| Commands   | `/help`                         | Show all commands                                 |
+| Github   | `/updateself`                         | Update the bot                                 |
+| Spotify   | `/currentsong`                         | Share the song you are currently listening to                                 |
+| Spotify   | `/songsuggestions`                         | Get song suggestions based on your top songs                                 |
+| Spotify   | `/topsongs`                         | Get the top songs from your liked songs                                 |
+| Spotify   | `/spotify`                         | Allow the bot to access your spotify account                                 |
+| Spotify   | `/playlists`                         | Get your playlists                                 |
+| Spotify   | `/playlistgen`                         | Generate a playlist from within a time frame                                 |
+| Spotify   | `/latestsongs`                         | Get the latest song from your liked songs                                 |
+| Weather   | `/forecast`                         | Get the forecast for the next 3 days                                 |
+| Weather   | `/weather`                         | Get the current weather                                 |
+| Weather   | `/astronomy`                         | Get the astronomical data for today                                 |
 ## Notes
 
 - This bot is currently under development and may contain bugs.

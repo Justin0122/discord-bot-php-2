@@ -27,7 +27,8 @@ class Help
 
     public function getOptions(): array
     {
-        $commands = CommandRegistrar::getAllCommands();
+        $commands = json_decode(file_get_contents(__DIR__.'/../../commands.json'), true);
+        $choices = [];
         foreach ($commands as $command) {
             $choices[] = [
                 'name' => $command['name'],
@@ -69,19 +70,20 @@ class Help
             return;
         }
 
+
         $embedFields = [];
 
         if ($command === null) {
             $commands = json_decode(file_get_contents(__DIR__.'/../../commands.json'), true);
 
+            $description = 'All commands';
             foreach ($commands as $command) {
                 $embedFields = $this->getFields($command, $embedFields);
             }
-            $description = 'All commands';
 
         }
         else{
-            $description = 'Help for ' . $command;
+            $description = 'Help for: **' . $command . '**'. PHP_EOL . 'Green is optional, red is required' . PHP_EOL . PHP_EOL;
             $commands = json_decode(file_get_contents(__DIR__.'/../../commands.json'), true);
             foreach ($commands as $command) {
                 if ($command['name'] === $optionRepository['command']->value) {
@@ -91,9 +93,12 @@ class Help
             }
         }
         $perPage = 4;
-        $title = 'Help';
 
+        $title = 'Help';
         $builder = Info::sendInfo($discord, $title, $description, $interaction);
+
+        $description = 'Green is optional, red is required';
+
         if (count($embedFields) <= $perPage) {
             $builder->addFirstPage($embedFields, $perPage);
         }
@@ -113,13 +118,16 @@ class Help
     {
         $options = '';
         foreach ($command['options'] as $option) {
-            $required = $option['required'] ? ' (required)' : '';
-            $options .= "- {$option['name']}{$required}\n";
+            if ($option['required']) {
+                $options .= "- {$option['name']} (required)\n";
+            } else {
+                $options .= "+ {$option['name']}\n";
+            }
         }
 
         $embedFields[] = [
             'name' =>  $command['description'],
-            'value' => "```{$command['name']}```\n```{$options}```",
+            'value' => "```{$command['name']}```\n```diff\n{$options}```",
             'inline' => false
         ];
         return $embedFields;
