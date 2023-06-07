@@ -32,6 +32,11 @@ Through this hobby project, I look forward to enhancing my PHP skills, deepening
 
 - [x] Basic commands
 - [x] Basic event handling
+- [x] Basic command template
+
+## Generate command files
+
+To generate a new command file, run `php MakeCommand.php [Command] [Command Directory]`. This will create a new command file in the `src/Commands/[Command Directory]` directory. The command file will be named `[Command].php` and will contain a basic template for a command.
 
 ## Slash Commands
 | Category         | Command                                        | Description                                                                |
