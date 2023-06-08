@@ -1,13 +1,13 @@
 <?php
 
-namespace Bot\Commands\Spotify\Github;
+namespace Bot\Commands\Github;
 
-use Discord\Parts\Interactions\Interaction;
-use Bot\Events\EphemeralResponse;
-use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
+use Bot\Builders\MessageBuilder;
+use Bot\Events\EphemeralResponse;
 use Bot\Events\Success;
 use Discord\Discord;
+use Discord\Parts\Interactions\Interaction;
 
 class UpdateSelf
 {

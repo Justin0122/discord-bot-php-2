@@ -35,7 +35,7 @@ class Weather
 
     public function getForecast($country, $city = null)
     {
-        $link = "$this->apiUrl/forecast.json?key=$this->apiKey&q=$city,$country&days=3";
+        $link = "$this->apiUrl/forecast.json?key=$this->apiKey&q=$city,$country&days=3&alerts=yes";
 
         $client = new Client();
 
