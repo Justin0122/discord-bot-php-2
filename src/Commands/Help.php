@@ -3,11 +3,8 @@
 namespace Bot\Commands;
 
 use Discord\Parts\Interactions\Interaction;
-use Discord\Builders\MessageBuilder;
 use Bot\Events\EphemeralResponse;
-use Bot\Helpers\CommandRegistrar;
-use Bot\Builders\EmbedBuilder;
-use Bot\Events\Success;
+use Bot\Builders\MessageBuilder;
 use Bot\Events\Error;
 use Bot\Events\Info;
 use Discord\Discord;
@@ -83,7 +80,7 @@ class Help
 
         }
         else{
-            $description = 'Help for: **' . $command . '**'. PHP_EOL . 'Green is optional, red is required' . PHP_EOL . PHP_EOL;
+            $description = 'Help for: **' . $command . '**' . PHP_EOL . PHP_EOL;
             $commands = json_decode(file_get_contents(__DIR__.'/../../commands.json'), true);
             foreach ($commands as $command) {
                 if ($command['name'] === $optionRepository['command']->value) {
@@ -97,12 +94,11 @@ class Help
         $title = 'Help';
         $builder = Info::sendInfo($discord, $title, $description, $interaction);
 
-        $description = 'Green is optional, red is required';
 
         if (count($embedFields) <= $perPage) {
             $builder->addFirstPage($embedFields, $perPage);
         }
-        $messageBuilder = \Bot\Builders\MessageBuilder::buildMessage($builder);
+        $messageBuilder = MessageBuilder::buildMessage($builder);
 
         if ($ephemeral) {
             EphemeralResponse::send($interaction, $messageBuilder, $ephemeral);

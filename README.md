@@ -8,6 +8,8 @@ Furthermore, this project presents an opportunity for me to delve into other API
 
 Through this hobby project, I look forward to enhancing my PHP skills, deepening my understanding of the Discord and other APIs, and ultimately creating a useful and enjoyable Discord bot for users to interact with.
 
+Furthermore, I am also using this project to explore the automation possibilities of file generation. For instance, I am using a PHP script to generate command files based on a template. This allows me to quickly generate new command files without having to manually create them and copy-paste the template. (Also the commands table below is generated using a PHP script)
+
 
 ## Installation
 
@@ -37,24 +39,25 @@ Through this hobby project, I look forward to enhancing my PHP skills, deepening
 ## Generate command files
 
 To generate a new command file, run `php MakeCommand.php [Command] [Command Directory]`. This will create a new command file in the `src/Commands/[Command Directory]` directory. The command file will be named `[Command].php` and will contain a basic template for a command.
+## Slash Commands
 
 | Category         | Command                                        | Description                                                                |
 |------------------|------------------------------------------------|----------------------------------------------------------------------------|
-| Commands   | `/ping`                         | Ping the bot to check if it is online                                 |
-| Commands   | `/translate`                         | translate text                                 |
-| Commands   | `/pagination`                         | test pagination                                 |
-| Commands   | `/help`                         | Show all commands                                 |
-| Github   | `/updateself`                         | Update the bot                                 |
-| Spotify   | `/currentsong`                         | Share the song you are currently listening to                                 |
-| Spotify   | `/songsuggestions`                         | Get song suggestions based on your top songs                                 |
-| Spotify   | `/topsongs`                         | Get the top songs from your liked songs                                 |
-| Spotify   | `/spotify`                         | Allow the bot to access your spotify account                                 |
-| Spotify   | `/playlists`                         | Get your playlists                                 |
-| Spotify   | `/playlistgen`                         | Generate a playlist from within a time frame                                 |
-| Spotify   | `/latestsongs`                         | Get the latest song from your liked songs                                 |
-| Weather   | `/forecast`                         | Get the forecast for the next 3 days                                 |
-| Weather   | `/weather`                         | Get the current weather                                 |
-| Weather   | `/astronomy`                         | Get the astronomical data for today                                 |
+| Commands   | `/ping [ephemeral]                         | Ping the bot to check if it is online                                 |
+| Commands   | `/translate [text] [to] [from] [ephemeral]                         | translate text                                 |
+| Commands   | `/pagination [fields] [field]                         | test pagination                                 |
+| Commands   | `/help [command] [ephemeral]                         | Show all commands                                 |
+| Github   | `/updateself [ephemeral]                         | Update the bot                                 |
+| Spotify   | `/currentsong [ephemeral]                         | Share the song you are currently listening to                                 |
+| Spotify   | `/songsuggestions [amount] [genre] [ephemeral] [mood] [queue]                         | Get song suggestions based on your top songs                                 |
+| Spotify   | `/topsongs [amount]                         | Get the top songs from your liked songs                                 |
+| Spotify   | `/spotify [select] [ephemeral]                         | Allow the bot to access your spotify account                                 |
+| Spotify   | `/playlists [amount]                         | Get your playlists                                 |
+| Spotify   | `/playlistgen [startdate] [public] [ephemeral]                         | Generate a playlist from within a time frame                                 |
+| Spotify   | `/latestsongs [amount]                         | Get the latest song from your liked songs                                 |
+| Weather   | `/forecast [country] [city]                         | Get the forecast for the next 3 days                                 |
+| Weather   | `/weather [country] [city] [country2] [city2] [ephemeral]                         | Get the current weather                                 |
+| Weather   | `/astronomy [country] [city] [ephemeral]                         | Get the astronomical data for today                                 |
 ## Notes
 
 - This bot is currently under development and may contain bugs.
