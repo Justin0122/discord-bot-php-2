@@ -8,16 +8,24 @@ function generateCommandsTable(): void
     $startTag = '## Slash Commands';
     $endTag = '## Notes';
 
-    $tableHeader = '| Category         | Command                                        | Description                                                                |
+    $tableHeader = '## Slash Commands' . "\n\n" .
+        '| Category         | Command                                        | Description                                                                |
 |------------------|------------------------------------------------|----------------------------------------------------------------------------|';
     $tableRows = '';
 
     foreach ($commands as $command) {
         $commandName = $command['name'];
+        $commandOptions = [];
+        if (isset($command['options'])) {
+            foreach ($command['options'] as $option) {
+                $commandOptions[] = "[" .$option['name'] . "]";
+            }
+        }
+        $commandName .= ' ' . implode(' ', $commandOptions);
         $commandDescription = $command['description'];
         $commandCategory = $command['category'];
 
-        $tableRows .= "| {$commandCategory}   | `/{$commandName}`                         | {$commandDescription}                                 |\n";
+        $tableRows .= "| {$commandCategory}   | `/{$commandName}                         | {$commandDescription}                                 |\n";
     }
 
     $markdownTable = "$tableHeader\n$tableRows";
