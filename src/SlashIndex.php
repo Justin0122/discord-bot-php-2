@@ -89,9 +89,9 @@ class SlashIndex
         return $embed;
     }
 
-    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $title = '', $description = '', $isEdit = false): void
+    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $title = '', $description = '', $isEdit = false, $AddButtons = false): void
     {
-        if ($totalFields > 4) {
+        if ($totalFields > 4 || $AddButtons) {
             $button1 = $this->paginationButton($discord, true, $title, $description);
             $button2 = $this->paginationButton($discord, false, $title, $description);
             if (($this->getOffset() + 1) === $this->getTotal()) {

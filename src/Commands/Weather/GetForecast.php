@@ -59,7 +59,9 @@ class GetForecast
         }
         $location = $weather->getLocation($forecast);
 
-        $builder = Success::sendSuccess($discord, 'Forecast', 'Here is the forecast for the next 3 days for ' . $location['city'] . ', ' . $location['country'], $interaction);
+        $description = 'Here is the forecast for the next 3 days.';
+        $title = 'Forecast for ' . $location['city'] . ', ' . $location['country'];
+        $builder = Success::sendSuccess($discord, $title, $description , $interaction);
         $forecast = $forecast['forecast']['forecastday'];
 
         $embedFields = [];
@@ -88,7 +90,7 @@ class GetForecast
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->setTotalPerPage(1);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title, '', '', true);
     }
 
 

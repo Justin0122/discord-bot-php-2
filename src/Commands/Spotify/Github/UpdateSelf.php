@@ -1,9 +1,9 @@
 <?php
 
-namespace Bot\Commands\Github;
+namespace Bot\Commands\Spotify\Github;
 
-use Bot\Events\EphemeralResponse;
 use Discord\Parts\Interactions\Interaction;
+use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
 use Bot\Events\Success;
