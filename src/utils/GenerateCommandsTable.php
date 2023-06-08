@@ -25,7 +25,7 @@ function generateCommandsTable(): void
         $commandDescription = $command['description'];
         $commandCategory = $command['category'];
 
-        $tableRows .= "| {$commandCategory}   | `/{$commandName}                         | {$commandDescription}                                 |\n";
+        $tableRows .= "| {$commandCategory}   | `/{$commandName}`                       | {$commandDescription}                                 |\n";
     }
 
     $markdownTable = "$tableHeader\n$tableRows";
