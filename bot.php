@@ -38,7 +38,6 @@ $discord->on('ready', function (Discord $discord) {
     CommandRegistrar::register($discord);
 
     generateCommandsTable();
-
 });
 
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
