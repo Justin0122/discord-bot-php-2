@@ -74,16 +74,6 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
         // Update the cooldown timestamp for the user and command
         $cooldowns[$userId][$command->getName()] = time();
 
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            die('could not fork');
-        } else if ($pid) {
-            //parent
-        } else {
-            //child
-            $command->handle($interaction, $discord, $userId);
-            exit(0);
-        }
         // Clean up expired cooldown timestamps
         foreach ($cooldowns as $user => $userCooldowns) {
             foreach ($userCooldowns as $commandName => $timestamp) {
