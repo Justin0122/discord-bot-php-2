@@ -41,7 +41,7 @@ class Ping
     }
     public function getCooldown(): ?int
     {
-        return 1000;
+        return 5;
     }
 
     public function handle(Interaction $interaction, Discord $discord): void
