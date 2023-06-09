@@ -59,6 +59,11 @@ class Spotify
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 10;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id)
     {
         $optionRepository = $interaction->data->options;

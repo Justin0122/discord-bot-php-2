@@ -39,6 +39,10 @@ class UpdateSelf
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 120;
+    }
     /**
      * @throws \Exception
      */

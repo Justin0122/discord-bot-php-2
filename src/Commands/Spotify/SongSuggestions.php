@@ -89,6 +89,11 @@ class SongSuggestions
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 120;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
 

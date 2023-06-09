@@ -9,6 +9,7 @@ use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Discord;
 use Dotenv\Dotenv;
+use Bot\Events\Error;
 
 include __DIR__.'/vendor/autoload.php';
 include 'Includes.php';
@@ -43,7 +44,58 @@ $discord->on('ready', function (Discord $discord) {
 $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Discord $discord) {
     $command = CommandRegistrar::getCommandByName($interaction->data->name);
     if ($command) {
-        $command->handle($interaction, $discord, $interaction->member->user->id);
+        $userId = $interaction->member->user->id;
+        $cooldownDuration = $command->getCooldown();
+        $cooldownFile = 'logs/cooldowns.json'; // JSON file to store cooldown timestamps
+
+        // Load existing cooldown data from the JSON file
+        $cooldowns = [];
+        if (file_exists($cooldownFile)) {
+            $cooldowns = json_decode(file_get_contents($cooldownFile), true);
+        }
+
+        // Check if the user has a cooldown timestamp for the command
+        if (isset($cooldowns[$userId][$command->getName()])) {
+            $lastCommandTimestamp = $cooldowns[$userId][$command->getName()];
+            $currentTimestamp = time();
+            $timeElapsed = $currentTimestamp - $lastCommandTimestamp;
+
+            // Check if the cooldown period has elapsed
+            if ($timeElapsed < $cooldownDuration) {
+                // Display a cooldown message or take appropriate action
+                Error::sendError($interaction, $discord, 'Please wait ' . ($cooldownDuration - $timeElapsed) . ' seconds before using this command again');
+                return;
+            }
+        }
+
+        // Execute the command
+        $command->handle($interaction, $discord, $userId);
+
+        // Update the cooldown timestamp for the user and command
+        $cooldowns[$userId][$command->getName()] = time();
+
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            die('could not fork');
+        } else if ($pid) {
+            //parent
+        } else {
+            //child
+            $command->handle($interaction, $discord, $userId);
+            exit(0);
+        }
+        // Clean up expired cooldown timestamps
+        foreach ($cooldowns as $user => $userCooldowns) {
+            foreach ($userCooldowns as $commandName => $timestamp) {
+                $timeElapsed = time() - $timestamp;
+                if ($timeElapsed >= $cooldownDuration) {
+                    unset($cooldowns[$user][$commandName]);
+                }
+            }
+        }
+
+        // Save the updated cooldown data to the JSON file
+        file_put_contents($cooldownFile, json_encode($cooldowns));
     }
 });
 

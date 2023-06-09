@@ -40,6 +40,11 @@ class ShareCurrentsong
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 30;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your current song', true);

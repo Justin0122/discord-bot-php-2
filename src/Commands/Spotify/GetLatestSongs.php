@@ -40,6 +40,11 @@ class GetLatestSongs
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 60;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;

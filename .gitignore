@@ -5,3 +5,4 @@ src/media/
 src/Commands/Interact
 queue.json
 commands.json
+logs/*

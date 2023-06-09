@@ -55,6 +55,11 @@ class Translate
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 5;
+    }
+
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;

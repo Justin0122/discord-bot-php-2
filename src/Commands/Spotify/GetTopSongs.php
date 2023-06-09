@@ -40,6 +40,11 @@ class GetTopSongs
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 60;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your top songs');

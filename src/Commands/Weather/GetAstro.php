@@ -50,6 +50,11 @@ class GetAstro
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 30;
+    }
+
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;
