@@ -5,6 +5,7 @@ namespace Bot\Commands\Github;
 use Bot\Builders\InitialEmbed;
 use Bot\Builders\MessageBuilder;
 use Bot\Events\EphemeralResponse;
+use Bot\Events\Error;
 use Bot\Events\Success;
 use Discord\Discord;
 use Discord\Parts\Interactions\Interaction;
@@ -44,6 +45,9 @@ class UpdateSelf
 
     public function handle(Interaction $interaction, Discord $discord): void
     {
+        if ($interaction->member->user->id != $_ENV['DISCORD_BOT_OWNER_ID']) {
+            Error::sendError($interaction, $discord, 'You are not the bot owner');
+        }
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? true;
         $botPid = getmypid();
