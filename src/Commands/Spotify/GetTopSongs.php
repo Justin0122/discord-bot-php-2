@@ -86,7 +86,7 @@ class GetTopSongs
         }
 
         $title = 'Your top songs';
-        $description = 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount;
+        $description = 'Top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount;
         $builder = Success::sendSuccess($discord, $title, $description, $interaction);
         $builder->addFirstPage($embedFields);
 

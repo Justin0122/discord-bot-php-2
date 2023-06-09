@@ -133,15 +133,13 @@ class Help
             }
         }
 
-        // show the cooldown if it's not null
-        if ($command['cooldown'] !== null) {
-            $embedFields[] = [
-                'name' => $command['description'],
-                'value' => "```{$command['name']}```\n```diff\n{$options}```\nCooldown: {$command['cooldown']} seconds",
-                'inline' => false
-            ];
-            return $embedFields;
-        }
+        $embedFields[] = [
+            'name' => $command['name'],
+            'value' => "```{$command['description']}```
+                        ```diff\n{$options}```
+                        ```fix\nCooldown: {$command['cooldown']} seconds```",
+            'inline' => false
+        ];
 
 
         return $embedFields;

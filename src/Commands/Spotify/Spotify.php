@@ -3,6 +3,7 @@
 namespace Bot\Commands\Spotify;
 
 use Discord\Parts\Interactions\Interaction;
+use Discord\Builders\Components\ActionRow;
 use Bot\Models\Spotify as SpotifyModel;
 use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
@@ -136,7 +137,7 @@ class Spotify
                 $songName = $song->name;
                 $artistName = $song->artists[0]->name;
                 $songLink = $song->external_urls->spotify;
-                $topSongsField .= "[{$songName}]({$songLink}) - {$artistName}\n";
+                $topSongsField .= "> [{$songName}]({$songLink}) - {$artistName}\n";
             }
             $builder->addField('Top Songs', $topSongsField, true);
         } else {
@@ -147,18 +148,18 @@ class Spotify
         }
 
         $currentSong = $spotify->getCurrentSong($user_id);
-        $builder->addField('Currently listening to ', $currentSong->item->name . ' - ' . $currentSong->item->artists[0]->name, false ?? 'No song playing');
+        $builder->addField('Currently listening to',"> " . $currentSong->item->name . ' - ' . $currentSong->item->artists[0]->name, false ?? 'No song playing');
 
-        $button = ButtonBuilder::addLinkButton('Open profile', $me->external_urls->spotify);
+        $actionRow = ActionRow::new();
+        ButtonBuilder::addLinkButton($actionRow, 'Open profile', $me->external_urls->spotify);
+
         if ($currentSong->item->external_urls->spotify) {
-            $button2 = ButtonBuilder::addLinkButton('Listen along', $currentSong->item->external_urls->spotify);
-            $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0], $button2[0]]);
-        }
-        else {
-            $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
+            ButtonBuilder::addLinkButton($actionRow, 'Listen along', $currentSong->item->external_urls->spotify);
         }
 
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
         EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
+
 
     }
 

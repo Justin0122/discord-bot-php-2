@@ -61,11 +61,11 @@ class GetLatestSongs
             //parent
         } else {
             //child
-            $this->getLastLiked($user_id, $discord, $interaction);
+            $this->getLastLiked($user_id, $discord, $interaction, $amount);
         }
     }
 
-    private function getLastLiked($user_id, $discord, Interaction $interaction): void
+    private function getLastLiked($user_id, $discord, Interaction $interaction, $amount): void
     {
         $spotify = new Spotify();
         $tracks = $spotify->getLatestSongs($user_id, $amount);

@@ -9,12 +9,13 @@ use Discord\Discord;
 class EmbedBuilder extends MessageBuilder
 {
     public $embed;
-    private Discord $discord;
+    public Discord $discord;
 
     public function __construct(Discord $discord)
     {
         $this->embed = new Embed($discord);
         $this->discord = $discord;
+        $this->setTimestamp();
     }
 
     public function setTitle(string $title): self
@@ -35,21 +36,9 @@ class EmbedBuilder extends MessageBuilder
         return $this;
     }
 
-    public function setAuthor(string $name, string $iconUrl, string $url): self
-    {
-        $this->embed->setAuthor($name, $iconUrl, $url);
-        return $this;
-    }
-
     public function setFooter($interaction = null): self
     {
-        $this->embed->setFooter('Requested by: ' . $interaction->member->username, $interaction->member->user->avatar);
-        return $this;
-    }
-
-    public function setImage(string $url): self
-    {
-        $this->embed->setImage($url);
+        $this->embed->setFooter($interaction->member->username, $interaction->member->user->avatar);
         return $this;
     }
 
@@ -59,9 +48,10 @@ class EmbedBuilder extends MessageBuilder
         return $this;
     }
 
-    public function setTimestamp(string $timestamp): self
+    public function setTimestamp(): self
     {
-        $this->embed->setTimestamp($timestamp);
+        $time = time();
+        $this->embed->setTimestamp($time);
         return $this;
     }
 
