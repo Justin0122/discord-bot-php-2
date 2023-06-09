@@ -40,6 +40,11 @@ class GetPlaylists
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 60;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         $optionRepository = $interaction->data->options;
@@ -72,7 +77,6 @@ class GetPlaylists
 
 
         $me = $spotify->getMe($user_id);
-        echo $me->display_name . PHP_EOL;
 
         $embedFields = [];
         foreach ($playlists as $playlist) {
@@ -84,11 +88,10 @@ class GetPlaylists
         }
 
         $builder = Success::sendSuccess($discord, 'Playlists of ' . $me->display_name, 'Total playlists: ' . count($playlists), $interaction);
-        $builder->addFirstPage($embedFields);
-
+        $builder->addFirstPage(4, $embedFields);
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, true);
+        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, '', '', true);
     }
 
 

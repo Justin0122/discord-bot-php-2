@@ -40,6 +40,11 @@ class GetTopSongs
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 60;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         InitialEmbed::send($interaction, $discord, 'Please wait while we are fetching your top songs');
@@ -81,7 +86,7 @@ class GetTopSongs
         }
 
         $title = 'Your top songs';
-        $description = 'Your top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount;
+        $description = 'Top songs from ' . $me->display_name . PHP_EOL . 'Amount: ' . $amount;
         $builder = Success::sendSuccess($discord, $title, $description, $interaction);
         $builder->addFirstPage($embedFields);
 

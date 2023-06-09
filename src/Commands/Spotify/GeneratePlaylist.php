@@ -2,6 +2,7 @@
 
 namespace Bot\Commands\Spotify;
 
+use Discord\Builders\Components\ActionRow;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
@@ -52,6 +53,11 @@ class GeneratePlaylist
     public function getGuildId(): ?string
     {
         return null;
+    }
+
+    public function getCooldown(): ?int
+    {
+        return 120;
     }
 
     /**
@@ -116,9 +122,10 @@ class GeneratePlaylist
             $builder = Success::sendSuccess($discord, 'Playlist generated for: ' . $me->display_name, 'Playlist generated with title: ' . $playlistTitle, $interaction);
             $builder->setFooter($interaction);
             $builder->setUrl($playlist[0]);
-            $button = ButtonBuilder::addLinkButton('Open playlist', $playlist[0]);
+            $actionRow = ActionRow::new();
+            ButtonBuilder::addLinkButton($actionRow, 'Open playlist', $playlist[0]);
 
-            $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
+            $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
 
             EphemeralResponse::send($interaction, $messageBuilder, $ephemeral);
         }

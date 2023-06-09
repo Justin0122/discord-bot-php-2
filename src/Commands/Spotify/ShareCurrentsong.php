@@ -2,6 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\ButtonBuilder;
+use Discord\Builders\Components\ActionRow;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Events\EphemeralResponse;
 use Bot\Builders\MessageBuilder;
@@ -40,6 +42,11 @@ class ShareCurrentsong
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 30;
+    }
+
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
         InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your current song', true);
@@ -74,7 +81,8 @@ class ShareCurrentsong
         $builder->addField('Artist', $tracks->item->artists[0]->name, true);
         $builder->addField('Album', $tracks->item->album->name, true);
         $builder->addField('Duration', gmdate("i:s", $tracks->item->duration_ms / 1000), true);
-
+        $actionRow = ActionRow::new();
+        ButtonBuilder::addLinkButton($actionRow, 'Listen on Spotify', $tracks->item->external_urls->spotify);
 
         $builder->setThumbnail($tracks->item->album->images[0]->url);
 
@@ -82,7 +90,7 @@ class ShareCurrentsong
 
         $messageBuilder = new \Discord\Builders\MessageBuilder();
         $messageBuilder->addEmbed($builder->build());
-        $messageBuilder = MessageBuilder::buildMessage($builder);
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
 
         EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
 

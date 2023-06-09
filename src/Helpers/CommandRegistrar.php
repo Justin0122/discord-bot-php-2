@@ -50,7 +50,8 @@ class CommandRegistrar
                     'description' => $command->description,
                     'options' => $command->options,
                     'guild_id' => $command->guild_id,
-                    'category' => $category
+                    'category' => $category,
+                    'cooldown' => (new $className())->getCooldown() ?? 5,
                 ];
                 //if the guild id is set, remove it from the array. (so it doesn't show up in /help in other guilds for example)
                 if ((new $className())->getGuildId()) {
@@ -80,6 +81,7 @@ class CommandRegistrar
                 $commandClass = new $className();
                 $commandName = $commandClass->getName();
                 $commandClasses[$commandName] = $commandClass;
+                $commandCooldown = $commandClass->getCooldown() ?? 5;
             }
 
             self::$commandCache = $commandClasses;

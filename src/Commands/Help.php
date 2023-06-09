@@ -54,6 +54,11 @@ class Help
         return null;
     }
 
+    public function getCooldown(): ?int
+    {
+        return 10;
+    }
+
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;
@@ -86,6 +91,13 @@ class Help
                 if ($command['name'] === $optionRepository['command']->value) {
                     $embedFields = $this->getFields($command, $embedFields, $count);
                     $count++;
+                }
+                if ($command['name'] === $optionRepository['command']->value && $command['cooldown'] !== null) {
+                    $embedFields[] = [
+                        'name' => 'Cooldown',
+                        'value' => $command['cooldown'] . ' seconds',
+                        'inline' => false
+                    ];
                 }
             }
         }
@@ -122,10 +134,14 @@ class Help
         }
 
         $embedFields[] = [
-            'name' =>  $command['description'],
-            'value' => "```{$command['name']}```\n```diff\n{$options}```",
+            'name' => $command['name'],
+            'value' => "```{$command['description']}```
+                        ```diff\n{$options}```
+                        ```fix\nCooldown: {$command['cooldown']} seconds```",
             'inline' => false
         ];
+
+
         return $embedFields;
     }
 

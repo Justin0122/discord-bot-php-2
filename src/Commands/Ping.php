@@ -3,6 +3,7 @@
 namespace Bot\Commands;
 
 use Bot\Events\EphemeralResponse;
+use Discord\Builders\Components\ActionRow;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\ButtonBuilder;
@@ -39,16 +40,27 @@ class Ping
     {
         return null;
     }
+    public function getCooldown(): ?int
+    {
+        return 5;
+    }
 
     public function handle(Interaction $interaction, Discord $discord): void
     {
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $builder = Success::sendSuccess($discord, 'Pong!', 'Pong!');
-        $button = ButtonBuilder::addPrimaryButton('Click me!', 'test');
-        $messageBuilder = MessageBuilder::buildMessage($builder, [$button[0]]);
+        $actionRow = ActionRow::new();
+        [$buttonRow, $button] = ButtonBuilder::addPrimaryButton('Click me', 'ping');
+        [$buttonRow, $button2] = ButtonBuilder::addSecondaryButton('Click me', 'secondary');
+        $actionRow->addComponent($button);
+        $actionRow->addComponent($button2);
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
         $interaction->respondWithMessage($messageBuilder, $ephemeral);
 
-        ButtonListener::listener($discord, $button[1], 'Pong!', 'Button Clicked!');
+        ButtonListener::listener($discord, $button, 'Pong!', 'Button Clicked!');
+        ButtonListener::listener($discord, $button2, 'Pong!', 'Button2 Clicked!');
     }
+
+
 }
