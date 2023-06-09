@@ -79,7 +79,7 @@ class GetForecast
             $alertMessage = isset($day['alerts']) ? $alert['event'] : 'No alerts';
 
             $embedFields[] = [
-                'name' => $day['date'],
+                'name' =>  $day['date'] = date('l \t\h\e jS \o\f F', strtotime($day['date'])),
                 'value' => "```diff
 Max temp: {$day['day']['maxtemp_c']}°C
 Min temp: {$day['day']['mintemp_c']}°C
