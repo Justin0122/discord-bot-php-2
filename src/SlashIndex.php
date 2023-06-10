@@ -2,6 +2,7 @@
 
 namespace Bot;
 
+use Bot\Events\Error;
 use Discord\Parts\Interactions\Interaction;
 use Discord\Builders\Components\ActionRow;
 use Discord\Builders\Components\Button;
@@ -37,12 +38,7 @@ class SlashIndex
             ->setLabel($label)
             ->setListener(function (Interaction $interaction) use ($discord, $isNextButton, $title, $description) {
                 if ($interaction->member->id !== $interaction->message->interaction->user->id) {
-                    $embed = new Embed($discord);
-                    $embed->setTitle('Error');
-                    $embed->setDescription('You can\'t do that!');
-                    $embed->setColor('ff0000');
-                    $interaction->respondWithMessage(MessageBuilder::new()->addEmbed($embed), true);
-                    return;
+                    Error::sendError($interaction, $discord, 'You cannot use this button');
                 }
 
                 if ($isNextButton) {

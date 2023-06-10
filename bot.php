@@ -82,6 +82,9 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
                     unset($cooldowns[$user][$commandName]);
                 }
             }
+            if (empty($cooldowns[$user])) {
+                unset($cooldowns[$user]);
+            }
         }
 
         // Save the updated cooldown data to the JSON file
