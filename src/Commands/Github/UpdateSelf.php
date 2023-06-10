@@ -75,10 +75,7 @@ class UpdateSelf
 
         $builder = Success::sendSuccess($discord, 'Bot updated', 'Bot has been updated. ' . PHP_EOL . 'Please restart the bot to apply the changes.', $interaction);
         $messageBuilder = MessageBuilder::buildMessage($builder);
-        $interaction->sendFollowUpMessage($messageBuilder, $ephemeral);
-
         EphemeralResponse::send($interaction, $messageBuilder, $ephemeral, true);
-
     }
 
 }
