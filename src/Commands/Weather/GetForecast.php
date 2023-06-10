@@ -36,6 +36,12 @@ class GetForecast
                 'description' => 'The city you want to get the weather of',
                 'type' => 3,
                 'required' => false
+            ],
+            [
+                'name' => 'ephemeral',
+                'description' => 'Send the message only to you (default: false)',
+                'type' => 5,
+                'required' => false
             ]
         ];
     }
@@ -55,6 +61,7 @@ class GetForecast
         $optionRepository = $interaction->data->options;
         $country = ucfirst($optionRepository['country']->value);
         $city = ucfirst($optionRepository['city']->value) ?? null;
+        $ephemeral = $optionRepository['ephemeral']->value ?? false;
 
         $weather = new Weather();
         $forecast = $weather->getForecast($country, $city);
@@ -121,6 +128,10 @@ Total precipitation: {$day['day']['totalprecip_mm']}mm rain
         }
 
         $messageBuilder = MessageBuilder::buildMessage($builder);
+        if ($ephemeral) {
+            $interaction->respondWithMessage($messageBuilder, true);
+            return;
+        }
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->setTotalPerPage(1);
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title, '', '', true);

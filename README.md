@@ -54,7 +54,7 @@ To generate a new command file, run `php MakeCommand.php [Command] [Command Dire
 | Spotify   | `/playlists [amount]`                       | Get your playlists                                 |
 | Spotify   | `/playlistgen [startdate] [public] [ephemeral]`                       | Generate a playlist from within a time frame                                 |
 | Spotify   | `/latestsongs [amount]`                       | Get the latest song from your liked songs                                 |
-| Weather   | `/forecast [country] [city]`                       | Get the forecast for the next 3 days                                 |
+| Weather   | `/forecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |
 | Weather   | `/weather [country] [city] [country2] [city2] [ephemeral]`                       | Get the current weather                                 |
 | Weather   | `/astronomy [country] [city] [ephemeral]`                       | Get the astronomical data for today                                 |
 ## Notes

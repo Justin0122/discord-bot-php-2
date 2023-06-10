@@ -68,10 +68,10 @@ class Translate
         $to = $optionRepository['to']->value;
         $from = $optionRepository['from']->value ?? 'auto';
 
-        exec('trans -b -t ' . $to . ' ' . $text . ' -f ' . $from, $output);
+        exec('trans -b -t ' . $to . ' "' . $text . '" -s ' . $from, $output);
         $translation = implode(' ', $output);
 
-        $builder = Success::sendSuccess($discord, 'Translating: ' . $text . ' to "' . $to . '" from "' . $from . '"', $translation);
+        $builder = Success::sendSuccess($discord, 'Translating: "' . $text . '" to "' . $to . '" from "' . $from . '"', "```". $translation . "```");
         $messageBuilder = MessageBuilder::buildMessage($builder);
         $interaction->respondWithMessage($messageBuilder, $ephemeral);
 
