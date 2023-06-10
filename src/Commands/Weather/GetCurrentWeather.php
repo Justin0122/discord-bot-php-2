@@ -50,7 +50,7 @@ class GetCurrentWeather
             ],
             [
                 'name' => 'ephemeral',
-                'description' => 'Send the message only to you',
+                'description' => 'Send the message only to you (default: false)',
                 'type' => 5,
                 'required' => false
             ]
