@@ -51,6 +51,7 @@ class UpdateSelf
     {
         if ($interaction->member->user->id != $_ENV['DISCORD_BOT_OWNER_ID']) {
             Error::sendError($interaction, $discord, 'You are not the bot owner');
+            return;
         }
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? true;
