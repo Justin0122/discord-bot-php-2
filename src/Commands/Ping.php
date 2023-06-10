@@ -2,12 +2,8 @@
 
 namespace Bot\Commands;
 
-use Bot\Events\EphemeralResponse;
-use Discord\Builders\Components\ActionRow;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
-use Bot\Builders\ButtonBuilder;
-use Bot\Events\ButtonListener;
 use Bot\Events\Success;
 use Discord\Discord;
 
@@ -50,16 +46,8 @@ class Ping
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $builder = Success::sendSuccess($discord, 'Pong!', 'Pong!');
-        $actionRow = ActionRow::new();
-        [$buttonRow, $button] = ButtonBuilder::addPrimaryButton('Click me', 'ping');
-        [$buttonRow, $button2] = ButtonBuilder::addSecondaryButton('Click me', 'secondary');
-        $actionRow->addComponent($button);
-        $actionRow->addComponent($button2);
-        $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
+        $messageBuilder = MessageBuilder::buildMessage($builder);
         $interaction->respondWithMessage($messageBuilder, $ephemeral);
-
-        ButtonListener::listener($discord, $button, 'Pong!', 'Button Clicked!');
-        ButtonListener::listener($discord, $button2, 'Pong!', 'Button2 Clicked!');
     }
 
 
