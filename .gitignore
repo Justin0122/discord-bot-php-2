@@ -1,7 +1,7 @@
 .env
 .idea
 vendor
-src/media/
+src/Media/
 src/Commands/Interact
 queue.json
 commands.json
