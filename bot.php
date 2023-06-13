@@ -62,7 +62,6 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
 
             // Check if the cooldown period has elapsed
             if ($timeElapsed < $cooldownDuration) {
-                // Display a cooldown message or take appropriate action
                 Error::sendError($interaction, $discord, 'Please wait ' . ($cooldownDuration - $timeElapsed) . ' seconds before using this command again');
                 return;
             }

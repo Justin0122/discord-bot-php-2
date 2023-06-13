@@ -85,7 +85,7 @@ class SlashIndex
         return $embed;
     }
 
-    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $title = '', $description = '', $isEdit = false, $AddButtons = false): void
+    public function handlePagination(int $totalFields, $builder, Discord $discord, Interaction $interaction, $embed, $title = '', $description = '', $isEdit = false, $AddButtons = false, $isInitialEphemeral = false): void
     {
         if ($totalFields > 4 || $AddButtons) {
             $button1 = $this->paginationButton($discord, true, $title, $description);
@@ -112,6 +112,10 @@ class SlashIndex
 
             if ($isEdit) {
                 $interaction->updateOriginalResponse($builder);
+            } else if ($isInitialEphemeral) {
+                $interaction->sendFollowUpMessage($builder);
+                $interaction->deleteOriginalResponse();
+
             } else {
                 $interaction->respondWithMessage($builder);
             }
