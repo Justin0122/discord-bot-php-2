@@ -158,7 +158,6 @@ class Spotify
         if (empty($playlists)) {
             return false;
         }
-
         return $playlists;
     }
 

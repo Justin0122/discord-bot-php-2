@@ -2,6 +2,8 @@
 
 namespace Bot\Commands\Spotify;
 
+use Bot\Builders\ButtonBuilder;
+use Discord\Builders\Components\ActionRow;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Builders\InitialEmbed;
@@ -25,14 +27,7 @@ class GetPlaylists
 
     public function getOptions(): array
     {
-        return [
-            [
-                'name' => 'amount',
-                'description' => 'amount of playlists (default 6 max 50)',
-                'type' => 4,
-                'required' => false
-            ]
-        ];
+        return [];
     }
 
     public function getGuildId(): ?string
@@ -47,8 +42,7 @@ class GetPlaylists
 
     public function handle(Interaction $interaction, Discord $discord, $user_id): void
     {
-        $optionRepository = $interaction->data->options;
-        $amount = $optionRepository['amount']->value ?? 6;
+        $amount = 6;
 
         InitialEmbed::Send($interaction, $discord, 'Please wait while we are fetching your playlists');
 
@@ -65,7 +59,7 @@ class GetPlaylists
 
     }
 
-    private function getPlaylistsFromUser($user_id, $amount, $discord, $interaction): void
+    private function getPlaylistsFromUser($user_id, $amount, $discord, Interaction $interaction): void
     {
         $spotify = new Spotify();
         $playlists = $spotify->getPlaylists($user_id, $amount);
@@ -74,7 +68,6 @@ class GetPlaylists
             Error::sendError($interaction, $discord, 'Something went wrong', true);
             return;
         }
-
 
         $me = $spotify->getMe($user_id);
 
@@ -88,11 +81,18 @@ class GetPlaylists
         }
 
         $builder = Success::sendSuccess($discord, 'Playlists of ' . $me->display_name, 'Total playlists: ' . count($playlists), $interaction);
-        $builder->addFirstPage(4, $embedFields);
-        $messageBuilder = MessageBuilder::buildMessage($builder);
-        $slashIndex = new SlashIndex($embedFields);
-        $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, '', '', true);
+        $builder->setUrl($me->external_urls->spotify);
+        $builder->setThumbnail($me->images[0]->url);
+
+        $actionRow = ActionRow::new();
+        ButtonBuilder::addLinkButton($actionRow, 'Open profile', $me->external_urls->spotify);
+
+        foreach ($embedFields as $embedField) {
+            $builder->addField($embedField['name'], $embedField['value'], $embedField['inline']);
+        }
+        $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
+
+        $interaction->updateOriginalResponse($messageBuilder);
+
     }
-
-
 }
