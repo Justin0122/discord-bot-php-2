@@ -51,7 +51,7 @@ To generate a new command file, run `php MakeCommand.php [Command] [Command Dire
 | Spotify   | `/songsuggestions [amount] [genre] [ephemeral] [mood] [queue]`                       | Get song suggestions based on your top songs                                 |
 | Spotify   | `/topsongs [amount]`                       | Get the top songs from your liked songs                                 |
 | Spotify   | `/spotify [select] [ephemeral]`                       | Allow the bot to access your spotify account                                 |
-| Spotify   | `/playlists [amount]`                       | Get your playlists                                 |
+| Spotify   | `/playlists `                       | Get your playlists                                 |
 | Spotify   | `/playlistgen [startdate] [public] [ephemeral]`                       | Generate a playlist from within a time frame                                 |
 | Spotify   | `/latestsongs [amount]`                       | Get the latest song from your liked songs                                 |
 | Weather   | `/forecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |

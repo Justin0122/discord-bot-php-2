@@ -103,7 +103,6 @@ class SlashIndex
                 $embed->addField($field['name'], $field['value'], $field['inline']);
             }
 
-
             $row = ActionRow::new()
                 ->addComponent($button2)
                 ->addComponent($button1);

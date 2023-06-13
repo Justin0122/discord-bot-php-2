@@ -181,7 +181,7 @@ class Spotify
             }
             return $me;
         } catch (\Exception $e) {
-
+            echo $e->getMessage();
         }
         return null;
     }
