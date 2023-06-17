@@ -39,6 +39,7 @@ class SlashIndex
             ->setListener(function (Interaction $interaction) use ($discord, $isNextButton, $title, $description) {
                 if ($interaction->member->id !== $interaction->message->interaction->user->id) {
                     Error::sendError($interaction, $discord, 'You cannot use this button');
+                    return;
                 }
 
                 if ($isNextButton) {
