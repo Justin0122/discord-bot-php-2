@@ -95,6 +95,4 @@ class GetTopSongs
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title, $description, true);
 
     }
-
-
 }

@@ -96,6 +96,4 @@ class GetLatestSongs
         $slashIndex = new SlashIndex($embedFields);
         $slashIndex->handlePagination(count($embedFields), $messageBuilder, $discord, $interaction, $builder, $title, $description, true);
     }
-
-
 }
