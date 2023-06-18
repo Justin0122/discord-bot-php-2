@@ -9,13 +9,8 @@ use Bot\Models\Weather;
 use Bot\Events\Error;
 use Discord\Discord;
 
-class GetAstro
+class Astronomy
 {
-    public function getName(): string
-    {
-        return 'astronomy';
-    }
-
     public function getDescription(): string
     {
         return 'Get the astronomical data for today';

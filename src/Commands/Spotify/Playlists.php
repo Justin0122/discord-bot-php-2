@@ -13,13 +13,8 @@ use Bot\Events\Error;
 use Discord\Discord;
 use Bot\SlashIndex;
 
-class GetPlaylists
+class Playlists
 {
-    public function getName(): string
-    {
-        return 'playlists';
-    }
-
     public function getDescription(): string
     {
         return 'Get your playlists';

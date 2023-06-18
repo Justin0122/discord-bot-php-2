@@ -13,13 +13,8 @@ use Bot\Models\Spotify;
 use Bot\Events\Error;
 use Discord\Discord;
 
-class ShareCurrentsong
+class CurrentSong
 {
-    public function getName(): string
-    {
-        return 'currentsong';
-    }
-
     public function getDescription(): string
     {
         return 'Share the song you are currently listening to';

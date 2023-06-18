@@ -15,10 +15,6 @@ use Discord\Discord;
 
 class Spotify
 {
-    public function getName(): string
-    {
-        return 'spotify';
-    }
     public function getDescription(): string
     {
         return 'Allow the bot to access your spotify account';

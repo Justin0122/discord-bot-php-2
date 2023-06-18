@@ -5,17 +5,12 @@ namespace Bot\Commands\Weather;
 use Discord\Parts\Interactions\Interaction;
 use Bot\Builders\MessageBuilder;
 use Bot\Events\Success;
-use Bot\Models\Weather;
+use Bot\Models\Weather as WeatherModel;
 use Bot\Events\Error;
 use Discord\Discord;
 
-class GetCurrentWeather
+class Weather
 {
-    public function getName(): string
-    {
-        return 'weather';
-    }
-
     public function getDescription(): string
     {
         return 'Get the current weather';
@@ -77,7 +72,7 @@ class GetCurrentWeather
         $country2 = ucfirst($optionRepository['country2']->value) ?? null;
         $city2 = ucfirst($optionRepository['city2']->value) ?? null;
 
-        $weather = new Weather();
+        $weather = new WeatherModel();
         $currentWeather = $weather->getWeather($country, $city);
 
         if (!$currentWeather) {

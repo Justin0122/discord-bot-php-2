@@ -11,13 +11,8 @@ use Bot\Events\Error;
 use Discord\Discord;
 use Bot\SlashIndex;
 
-class GetTopSongs
+class TopSongs
 {
-    public function getName(): string
-    {
-        return 'topsongs';
-    }
-
     public function getDescription(): string
     {
         return 'Get the top songs from your liked songs';

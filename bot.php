@@ -55,8 +55,10 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
         }
 
         // Check if the user has a cooldown timestamp for the command
-        if (isset($cooldowns[$userId][$command->getName()])) {
-            $lastCommandTimestamp = $cooldowns[$userId][$command->getName()];
+        //get the command name by classname
+        $commandName = explode('\\', get_class($command));
+        if (isset($cooldowns[$userId][$commandName[count($commandName) - 1]])) {
+            $lastCommandTimestamp = $cooldowns[$userId][$commandName[count($commandName) - 1]];
             $currentTimestamp = time();
             $timeElapsed = $currentTimestamp - $lastCommandTimestamp;
 
@@ -71,7 +73,7 @@ $discord->on(Event::INTERACTION_CREATE, function (Interaction $interaction, Disc
         $command->handle($interaction, $discord, $userId);
 
         // Update the cooldown timestamp for the user and command
-        $cooldowns[$userId][$command->getName()] = time();
+        $cooldowns[$userId][$commandName[count($commandName) - 1]] = time();
 
         // Clean up expired cooldown timestamps
         foreach ($cooldowns as $user => $userCooldowns) {

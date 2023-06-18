@@ -14,13 +14,8 @@ use Bot\Events\Error;
 use Discord\Discord;
 use DateTime;
 
-class GeneratePlaylist
+class PlaylistGen
 {
-    public function getName(): string
-    {
-        return 'playlistgen';
-    }
-
     public function getDescription(): string
     {
         return 'Generate a playlist from within a time frame';

@@ -29,18 +29,18 @@ class CommandRegistrar
 
             if (class_exists($className)) {
 
-                //if the guild id is set, register the command to the guild
-                if ((new $className())->getGuildId()) {
-                    $command = new Command($discord, ['name' => (new $className())->getName(), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
+                $command = new Command($discord, ['name' => $name = strtolower((new \ReflectionClass($className))->getShortName()), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
+
+                if ((new $className())->getGuildId()) //if the guild id is set, register the command to the guild
+                {
                     $discord->guilds->offsetGet((new $className())->getGuildId())->commands->save($command);
-                    echo "Registered command: " . $command->name . " to guild: " . $command->guild_id . PHP_EOL;
+                    echo "Registered command: " . $name . "to guild: " . (new $className())->getGuildId() . "\n";
                     continue;
                 }
                 else {
 
-                    $command = new Command($discord, ['name' => (new $className())->getName(), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
                     $discord->application->commands->save($command);
-                    echo "Registered command: " . $command->name . PHP_EOL;
+                    echo "Registered command: " . $name . "\n";
                 }
 
                 $category = explode('/', $filename);
@@ -68,6 +68,9 @@ class CommandRegistrar
 
     private static $commandCache = null;
 
+    /**
+     * @throws \ReflectionException
+     */
     public static function getCommandByName($command)
     {
         if (self::$commandCache === null) {
@@ -79,7 +82,7 @@ class CommandRegistrar
                 require_once $filename;
                 $className = 'Bot\\Commands\\' . self::getClassNameFromFilename($filename);
                 $commandClass = new $className();
-                $commandName = $commandClass->getName();
+                $commandName = strtolower((new \ReflectionClass($className))->getShortName());
                 $commandClasses[$commandName] = $commandClass;
                 $commandCooldown = $commandClass->getCooldown() ?? 5;
             }

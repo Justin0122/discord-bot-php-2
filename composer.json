@@ -4,6 +4,7 @@
         "vlucas/phpdotenv": "^5.5",
         "jwilsson/spotify-web-api-php": "^5.6",
         "guzzlehttp/guzzle": "^7.7",
-        "ext-pcntl": "*"
+        "ext-pcntl": "*",
+      "ext-dom": "*"
     }
 }

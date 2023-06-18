@@ -12,11 +12,6 @@ use Bot\SlashIndex;
 
 class GetForecast
 {
-    public function getName(): string
-    {
-        return 'forecast';
-    }
-
     public function getDescription(): string
     {
         return 'Get the forecast for the next 3 days';

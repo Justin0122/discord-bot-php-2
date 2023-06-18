@@ -12,11 +12,6 @@ use Bot\SlashIndex;
 
 class Help
 {
-    public function getName(): string
-    {
-        return 'help';
-    }
-
     public function getDescription(): string
     {
         return 'Show all commands';
