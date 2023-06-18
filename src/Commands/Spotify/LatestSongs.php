@@ -16,7 +16,7 @@ class LatestSongs
 
     public function getDescription(): string
     {
-        return 'Get the latest song from your liked songs';
+        return 'Get your last liked songs';
     }
 
     public function getOptions(): array
