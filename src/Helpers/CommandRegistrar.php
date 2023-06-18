@@ -28,18 +28,17 @@ class CommandRegistrar
             $className = 'Bot\\Commands\\' . str_replace('/', '\\', substr($filename, strlen(__DIR__.'/../Commands/'), -4));
 
             if (class_exists($className)) {
-                $name = strtolower((new \ReflectionClass($className))->getShortName());
 
-                //if the guild id is set, register the command to the guild
-                if ((new $className())->getGuildId()) {
-                    $command = new Command($discord, ['name' => $name, 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
+                $command = new Command($discord, ['name' => $name = strtolower((new \ReflectionClass($className))->getShortName()), 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
+
+                if ((new $className())->getGuildId()) //if the guild id is set, register the command to the guild
+                {
                     $discord->guilds->offsetGet((new $className())->getGuildId())->commands->save($command);
                     echo "Registered command: " . $name . "to guild: " . (new $className())->getGuildId() . "\n";
                     continue;
                 }
                 else {
 
-                    $command = new Command($discord, ['name' => $name, 'description' => (new $className())->getDescription(), 'options' => (new $className())->getOptions(), 'guild_id' => (new $className())->getGuildId()]);
                     $discord->application->commands->save($command);
                     echo "Registered command: " . $name . "\n";
                 }

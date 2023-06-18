@@ -45,6 +45,7 @@ To generate a new command file, run `php MakeCommand.php [Command] [Command Dire
 |------------------|------------------------------------------------|----------------------------------------------------------------------------|
 | Commands   | `/ping [ephemeral]`                       | Ping the bot to check if it is online                                 |
 | Commands   | `/translate [text] [to] [from] [ephemeral]`                       | translate text                                 |
+| Commands   | `/search [query] [safe] [ephemeral]`                       | Search google for a query                                 |
 | Commands   | `/help [command] [ephemeral]`                       | Show all commands                                 |
 | Github   | `/updateself [ephemeral]`                       | Update the bot                                 |
 | Spotify   | `/songsuggestions [amount] [genre] [ephemeral] [mood] [queue]`                       | Get song suggestions based on your top songs                                 |
