@@ -14,11 +14,6 @@ use Discord\Discord;
 
 class SongSuggestions
 {
-    public function getName(): string
-    {
-        return 'songsuggestions';
-    }
-
     public function getDescription(): string
     {
         return 'Get song suggestions based on your top songs';

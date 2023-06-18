@@ -10,11 +10,6 @@ use Discord\Discord;
 
 class Ping
 {
-    public function getName(): string
-    {
-        return 'ping';
-    }
-
     public function getDescription(): string
     {
         return 'Ping the bot to check if it is online';

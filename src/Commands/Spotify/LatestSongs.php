@@ -11,12 +11,8 @@ use Bot\Events\Error;
 use Discord\Discord;
 use Bot\SlashIndex;
 
-class GetLatestSongs
+class LatestSongs
 {
-    public function getName(): string
-    {
-        return 'latestsongs';
-    }
 
     public function getDescription(): string
     {

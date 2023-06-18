@@ -9,11 +9,6 @@ use Discord\Discord;
 
 class Translate
 {
-    public function getName(): string
-    {
-        return 'translate';
-    }
-
     public function getDescription(): string
     {
         return 'translate text';
