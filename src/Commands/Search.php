@@ -62,7 +62,7 @@ class Search
         return 5;
     }
 
-    public function handle(Interaction $interaction, Discord $discord): void
+    public function handle(Interaction $interaction): void
     {
         $optionRepository = $interaction->data->options;
         $ephemeral = $optionRepository['ephemeral']->value ?? false;
