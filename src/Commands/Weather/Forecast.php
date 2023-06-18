@@ -10,7 +10,7 @@ use Bot\Events\Error;
 use Discord\Discord;
 use Bot\SlashIndex;
 
-class GetForecast
+class Forecast
 {
     public function getDescription(): string
     {

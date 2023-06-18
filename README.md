@@ -55,8 +55,8 @@ To generate a new command file, run `php MakeCommand.php [Command] [Command Dire
 | Spotify   | `/currentsong [ephemeral]`                       | Share the song you are currently listening to                                 |
 | Spotify   | `/topsongs [amount]`                       | Get the top songs from your liked songs                                 |
 | Spotify   | `/spotify [select] [ephemeral]`                       | Allow the bot to access your spotify account                                 |
-| Weather   | `/getforecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |
 | Weather   | `/weather [country] [city] [country2] [city2] [ephemeral]`                       | Get the current weather                                 |
+| Weather   | `/forecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |
 | Weather   | `/astronomy [country] [city] [ephemeral]`                       | Get the astronomical data for today                                 |
 ## Notes
 
