@@ -70,10 +70,10 @@ class Spotify
         $ephemeral = $optionRepository['ephemeral']->value ?? false;
         $guildId = $_ENV['DISCORD_GUILD_ID'];
 
-        if ($guildId !== $interaction->guild_id) {
-            Error::sendError($interaction, $discord, 'This command is not available in this server (yet)');
-            return;
-        }
+//        if ($guildId !== $interaction->guild_id) {
+//            Error::sendError($interaction, $discord, 'This command is not available in this server (yet)');
+//            return;
+//        }
 
         InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
 
@@ -105,12 +105,11 @@ class Spotify
 
         $url = "https://accounts.spotify.com/authorize?client_id={$_ENV['SPOTIFY_CLIENT_ID']}&response_type=code&redirect_uri={$_ENV['SPOTIFY_REDIRECT_URI']}&scope=user-read-email%20user-read-private%20user-library-read%20user-top-read%20user-read-recently-played%20user-read-playback-state%20user-read-currently-playing%20playlist-read-private%20playlist-read-collaborative%20user-library-modify%20user-read-recently-played%20user-read-currently-playing&state={$user_id}";
 
-        $builder = Success::sendSuccess($discord, 'Spotify');
+        $builder = Success::sendSuccess($discord, 'Spotify', 'Click the button below to login', $interaction);
         $actionRow = ActionRow::new();
         ButtonBuilder::addLinkButton($actionRow, 'Login', $url);
 
         $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
-
         $interaction->sendFollowUpMessage($messageBuilder, true);
         $interaction->deleteOriginalResponse();
     }
