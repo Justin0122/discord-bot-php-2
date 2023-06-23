@@ -43,21 +43,21 @@ To generate a new command file, run `php MakeCommand.php [Command] [Command Dire
 
 | Category         | Command                                        | Description                                                                |
 |------------------|------------------------------------------------|----------------------------------------------------------------------------|
-| Commands   | `/ping [ephemeral]`                       | Ping the bot to check if it is online                                 |
-| Commands   | `/translate [text] [to] [from] [ephemeral]`                       | translate text                                 |
-| Commands   | `/search [query] [safe] [ephemeral]`                       | Search google for a query                                 |
 | Commands   | `/help [command] [ephemeral]`                       | Show all commands                                 |
+| Commands   | `/ping [ephemeral]`                       | Ping the bot to check if it is online                                 |
+| Commands   | `/search [query] [safe] [ephemeral]`                       | Search google for a query                                 |
+| Commands   | `/translate [text] [to] [from] [ephemeral]`                       | translate text                                 |
 | Github   | `/updateself [ephemeral]`                       | Update the bot                                 |
-| Spotify   | `/songsuggestions [amount] [genre] [ephemeral] [mood] [queue]`                       | Get song suggestions based on your top songs                                 |
-| Spotify   | `/playlists `                       | Get your playlists                                 |
-| Spotify   | `/playlistgen [startdate] [public] [ephemeral]`                       | Generate a playlist from within a time frame                                 |
-| Spotify   | `/latestsongs [amount]`                       | Get your last liked songs                                 |
 | Spotify   | `/currentsong [ephemeral]`                       | Share the song you are currently listening to                                 |
-| Spotify   | `/topsongs [amount]`                       | Get the top songs from your liked songs                                 |
+| Spotify   | `/latestsongs [amount]`                       | Get your last liked songs                                 |
+| Spotify   | `/playlistgen [startdate] [public] [ephemeral]`                       | Generate a playlist from within a time frame                                 |
+| Spotify   | `/playlists `                       | Get your playlists                                 |
+| Spotify   | `/songsuggestions [amount] [genre] [ephemeral] [mood] [queue]`                       | Get song suggestions based on your top songs                                 |
 | Spotify   | `/spotify [select] [ephemeral]`                       | Allow the bot to access your spotify account                                 |
-| Weather   | `/weather [country] [city] [country2] [city2] [ephemeral]`                       | Get the current weather                                 |
-| Weather   | `/forecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |
+| Spotify   | `/topsongs [amount]`                       | Get the top songs from your liked songs                                 |
 | Weather   | `/astronomy [country] [city] [ephemeral]`                       | Get the astronomical data for today                                 |
+| Weather   | `/forecast [country] [city] [ephemeral]`                       | Get the forecast for the next 3 days                                 |
+| Weather   | `/weather [country] [city] [country2] [city2] [ephemeral]`                       | Get the current weather                                 |
 ## Notes
 
 - This bot is currently under development and may contain bugs.
