@@ -75,7 +75,7 @@ class Spotify
 //            return;
 //        }
 
-        InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
+//        InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
 
         $pid = pcntl_fork();
         if ($pid == -1) {
@@ -98,10 +98,10 @@ class Spotify
 
     private function login(Interaction $interaction, Discord $discord, $user_id, $me): void
     {
-        if ($me){
-            Error::sendError($interaction, $discord, 'You are already connected to Spotify', true, true);
-            return;
-        }
+//        if ($me){
+//            Error::sendError($interaction, $discord, 'You are already connected to Spotify', true, true);
+//            return;
+//        }
 
         $url = "https://accounts.spotify.com/authorize?client_id={$_ENV['SPOTIFY_CLIENT_ID']}&response_type=code&redirect_uri={$_ENV['SPOTIFY_REDIRECT_URI']}&scope=user-read-email%20user-read-private%20user-library-read%20user-top-read%20user-read-recently-played%20user-read-playback-state%20user-read-currently-playing%20playlist-read-private%20playlist-read-collaborative%20user-library-modify%20user-read-recently-played%20user-read-currently-playing&state={$user_id}";
 
@@ -110,8 +110,7 @@ class Spotify
         ButtonBuilder::addLinkButton($actionRow, 'Login', $url);
 
         $messageBuilder = MessageBuilder::buildMessage($builder, [$actionRow]);
-        $interaction->sendFollowUpMessage($messageBuilder, true);
-        $interaction->deleteOriginalResponse();
+        $interaction->respondWithMessage($messageBuilder, false);
     }
 
     private function logout(Interaction $interaction, Discord $discord, $user_id): void
