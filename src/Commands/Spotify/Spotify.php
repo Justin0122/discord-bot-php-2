@@ -75,33 +75,39 @@ class Spotify
 //            return;
 //        }
 
-        InitialEmbed::Send($interaction, $discord,'Fetching your data', true);
+        $url = "https://accounts.spotify.com/authorize?client_id={$_ENV['SPOTIFY_CLIENT_ID']}&response_type=code&redirect_uri={$_ENV['SPOTIFY_REDIRECT_URI']}&scope=user-read-email%20user-read-private%20user-library-read%20user-top-read%20user-read-recently-played%20user-read-playback-state%20user-read-currently-playing%20playlist-read-private%20playlist-read-collaborative%20user-library-modify%20user-read-recently-played%20user-read-currently-playing&state={$user_id}";
 
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            die('could not fork');
-        } else if ($pid) {
-            //parent
-        } else {
-            $me = $this->connect($user_id);
-            //child
-            if ($login) {
-                $this->login($interaction, $discord, $user_id, $me);
-            } elseif ($logout) {
-                $this->logout($interaction, $discord, $user_id, $me);
-            } elseif ($me) {
-                $this->me($interaction, $discord, $user_id, $ephemeral, $me);
-            }
-        }
+        $builder = Success::sendSuccess($discord, 'test', $url, $interaction);
+
+        $messageBuilder = MessageBuilder::buildMessage($builder);
+
+        $interaction->respondWithMessage($messageBuilder);
+
+//        $pid = pcntl_fork();
+//        if ($pid == -1) {
+//            die('could not fork');
+//        } else if ($pid) {
+//            //parent
+//        } else {
+//            $me = $this->connect($user_id);
+//            //child
+//            if ($login) {
+//                $this->login($interaction, $discord, $user_id, $me);
+//            } elseif ($logout) {
+//                $this->logout($interaction, $discord, $user_id, $me);
+//            } elseif ($me) {
+//                $this->me($interaction, $discord, $user_id, $ephemeral, $me);
+//            }
+//        }
 
     }
 
     private function login(Interaction $interaction, Discord $discord, $user_id, $me): void
     {
-        if ($me){
-            Error::sendError($interaction, $discord, 'You are already connected to Spotify', true, true);
-            return;
-        }
+//        if ($me){
+//            Error::sendError($interaction, $discord, 'You are already connected to Spotify', true, true);
+//            return;
+//        }
 
         $url = "https://accounts.spotify.com/authorize?client_id={$_ENV['SPOTIFY_CLIENT_ID']}&response_type=code&redirect_uri={$_ENV['SPOTIFY_REDIRECT_URI']}&scope=user-read-email%20user-read-private%20user-library-read%20user-top-read%20user-read-recently-played%20user-read-playback-state%20user-read-currently-playing%20playlist-read-private%20playlist-read-collaborative%20user-library-modify%20user-read-recently-played%20user-read-currently-playing&state={$user_id}";
 
