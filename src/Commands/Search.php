@@ -40,9 +40,7 @@ class Search
                         'name' => 'off',
                         'value' => 'off'
                     ]
-                ],
-                'default' => 'on'
-
+                ]
             ],
             [
                 'name' => 'ephemeral',
